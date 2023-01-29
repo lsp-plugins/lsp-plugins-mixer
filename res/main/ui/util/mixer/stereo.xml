@@ -2,6 +2,7 @@
 	<ui:set id="channels" value="${(ex :in_16l) ? 16 : (ex :in_8l) ? 8 : 4}" />
 
 	<grid rows="10" cols="${2 * :channels + 3}" hspacing="4" transpose="true">
+		<!-- Input channels -->
 		<ui:for id="i" first="1" count=":channels">
 			<!-- Column 1 -->
 			<cell cols="2">
@@ -50,17 +51,71 @@
 				<value id="cb_${i}" />
 			</cell>
 			<fader id="cg_${i}" vexpand="true" angle="1" />
-			<value id="cg_${i}" />
+			<value id="cg_${i}" vreduce="true" />
 			
 			<!-- Column 2 -->
 			<knob id="cp_${i}r" />
 			<value id="cp_${i}r" />
 			<cell rows="2">
-				<ledmeter vexpand="true" angle="1">
-					<ledchannel id="cl_${i}l" min="-72 db" max="12 db" log="true" type="rms_peak" peak.visibility="true" value.color="left_in"/>
-					<ledchannel id="cl_${i}r" min="-72 db" max="12 db" log="true" type="rms_peak" peak.visibility="true" value.color="right_in"/>
+				<ledmeter height.min="256" vexpand="true" angle="1">
+					<ledchannel id="cl_${i}l" min="-72 db" max="12 db" log="true" type="rms_peak" peak.visibility="true" value.color="left"/>
+					<ledchannel id="cl_${i}r" min="-72 db" max="12 db" log="true" type="rms_peak" peak.visibility="true" value.color="right"/>
 				</ledmeter>
 			</cell>
 		</ui:for>
+		
+		<!-- Master section -->
+		<!-- Column 1 -->
+		<cell cols="3">
+			<label text="labels.chan.output" />
+		</cell>
+		<cell cols="3">
+			<button
+				id="mono"
+				text="labels.signal.mono"
+				ui:inject="Button_Cycle"
+				height="22"
+				hfill="true"
+				font.size="10"
+				pad.r="6"
+				expand="false" />
+		</cell>
+		<label text="labels.signal.dry" />
+		<knob id="dry" />
+		<value id="dry" />
+		<cell cols="3">
+			<label text="labels.balance" />
+		</cell>
+		<cell cols="3">
+			<fader id="bal" />
+		</cell>
+		<cell cols="3">
+			<value id="bal" />
+		</cell>
+		<cell rows="2">
+			<ledmeter height.min="256" vexpand="true" angle="1">
+				<ledchannel id="ilm_l" min="-72 db" max="12 db" log="true" type="rms_peak" peak.visibility="true" value.color="left_in"/>
+				<ledchannel id="ilm_r" min="-72 db" max="12 db" log="true" type="rms_peak" peak.visibility="true" value.color="right_in"/>
+			</ledmeter>
+		</cell>
+
+		<!-- Column 2 -->
+		<cell rows="3">
+			<void />
+		</cell>
+		<fader id="g_out" vexpand="true" angle="1" />
+		<value id="g_out" vreduce="true" />
+
+		<!-- Column 3 -->
+		<label text="labels.signal.wet" />
+		<knob id="wet" />
+		<value id="wet" />
+		<cell rows="2">
+			<ledmeter height.min="256" vexpand="true" angle="1">
+				<ledchannel id="olm_l" min="-72 db" max="12 db" log="true" type="rms_peak" peak.visibility="true" value.color="left"/>
+				<ledchannel id="olm_r" min="-72 db" max="12 db" log="true" type="rms_peak" peak.visibility="true" value.color="right"/>
+			</ledmeter>
+		</cell>
+
 	</grid>
 </plugin>

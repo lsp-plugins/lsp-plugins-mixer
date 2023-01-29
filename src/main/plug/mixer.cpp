@@ -95,7 +95,9 @@ namespace lsp
             vTemp[0]        = NULL;
             vTemp[1]        = NULL;
 
+            pBypass         = NULL;
             pMonoOut        = NULL;
+            pBalance        = NULL;
 
             pData           = NULL;
         }
@@ -148,7 +150,6 @@ namespace lsp
                 c->fDry         = GAIN_AMP_0_DB;
                 c->fWet         = GAIN_AMP_0_DB;
 
-                c->pBypass      = NULL;
                 c->pIn          = NULL;
                 c->pOut         = NULL;
                 c->pDry         = NULL;
@@ -190,13 +191,14 @@ namespace lsp
             for (size_t i=0; i<nPChannels; ++i)
                 vPChannels[i].pOut      = TRACE_PORT(ports[port_id++]);
 
-            plug::IPort *bypass     = TRACE_PORT(ports[port_id++]);
-            for (size_t i=0; i<nPChannels; ++i)
-                vPChannels[i].pBypass   = bypass;
+            pBypass                 = TRACE_PORT(ports[port_id++]);
 
             // Bind mono output for stereo mixer
             if (nPChannels > 1)
+            {
                 pMonoOut                = TRACE_PORT(ports[port_id++]);
+                pBalance                = TRACE_PORT(ports[port_id++]);
+            }
 
             plug::IPort *dry        = TRACE_PORT(ports[port_id++]);
             plug::IPort *wet        = TRACE_PORT(ports[port_id++]);
@@ -293,11 +295,13 @@ namespace lsp
 
         void mixer::update_settings()
         {
+            bool bypass     = pBypass->value() >= 0.5f;
+
             // Update settings for primary channels
             for (size_t i=0; i<nPChannels; ++i)
             {
                 primary_channel_t *c    = &vPChannels[i];
-                c->sBypass.set_bypass(c->pBypass->value() >= 0.5f);
+                c->sBypass.set_bypass(bypass);
 
                 float out_gain          = c->pOutGain->value();
                 c->fDry                 = c->pDry->value() * out_gain;

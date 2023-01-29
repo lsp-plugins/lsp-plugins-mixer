@@ -62,17 +62,18 @@ namespace lsp
             METER_GAIN("cl" id "r", "Channel signal level right", GAIN_AMP_P_48_DB)
 
         #define MIX_MONO_GLOBAL \
-            DRY_GAIN(0.0f), \
+            DRY_GAIN(1.0f), \
             WET_GAIN(1.0f), \
-            OUT_GAIN, \
+            LOG_CONTROL("g_out", "Output gain", U_GAIN_AMP, meta::mixer::CHANNEL_GAIN), \
             METER_GAIN("ilm", "Input level meter", GAIN_AMP_P_48_DB), \
             METER_GAIN("olm", "Output level meter", GAIN_AMP_P_48_DB)
 
         #define MIX_STEREO_GLOBAL \
             SWITCH("mono", "Mono output", 0.0f), \
-            DRY_GAIN(0.0f), \
+            PAN_CTL("bal", "Output balance", 0.0f), \
+            DRY_GAIN(1.0f), \
             WET_GAIN(1.0f), \
-            OUT_GAIN, \
+            LOG_CONTROL("g_out", "Output gain", U_GAIN_AMP, meta::mixer::CHANNEL_GAIN), \
             METER_GAIN("ilm_l", "Input level meter left", GAIN_AMP_P_48_DB), \
             METER_GAIN("ilm_r", "Input level meter right", GAIN_AMP_P_48_DB), \
             METER_GAIN("olm_l", "Output level meter left", GAIN_AMP_P_48_DB), \

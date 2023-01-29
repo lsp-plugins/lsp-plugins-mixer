@@ -50,7 +50,6 @@ namespace lsp
                     float               fDry;           // Dry signal amount
                     float               fWet;           // Wet signal amount
 
-                    plug::IPort        *pBypass;        // Bypass switch
                     plug::IPort        *pIn;            // Input data port
                     plug::IPort        *pOut;           // Output data port
                     plug::IPort        *pDry;           // Dry signal amount
@@ -85,7 +84,9 @@ namespace lsp
                 float              *vWet[2];            // Wet buffers
                 float              *vTemp[2];           // Temporary buffers
 
-                plug::IPort        *pMonoOut;
+                plug::IPort        *pBypass;            // Bypass switch
+                plug::IPort        *pMonoOut;           // Mono output
+                plug::IPort        *pBalance;           // Balance control
 
                 uint8_t            *pData;              // Allocated data
 
