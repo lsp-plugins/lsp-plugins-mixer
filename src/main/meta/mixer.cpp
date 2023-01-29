@@ -56,7 +56,7 @@ namespace lsp
             SWITCH("cp" id, "Channel phase invert" label, 0.0f), \
             PAN_CTL("cpl" id, "Channel pan left" label, -100.0f), \
             PAN_CTL("cpr" id, "Channel pan right" label, 100.0f), \
-            PERCENTS("cb" id, "Channel balance" label, 50.0f, 0.1f), \
+            PAN_CTL("cb" id, "Channel output balance" label, 0.0f), \
             LOG_CONTROL("cg" id, "Channel gain" label, U_GAIN_AMP, meta::mixer::CHANNEL_GAIN), \
             METER_GAIN("cll" id, "Channel signal level left", GAIN_AMP_P_48_DB), \
             METER_GAIN("clr" id, "Channel signal level right", GAIN_AMP_P_48_DB)
@@ -251,7 +251,7 @@ namespace lsp
             &mixer_bundle
         };
 
-        const plugin_t mixer_x16_mono =
+        const plugin_t mixer_x16_stereo =
         {
             "Mixer x16 Stereo",
             "Mixer x16 Stereo",

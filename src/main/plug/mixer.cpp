@@ -88,6 +88,8 @@ namespace lsp
             nPChannels      = p_channels;
             nMChannels      = m_channels;
             bMonoOut        = false;
+            vWet[0]         = NULL;
+            vWet[1]         = NULL;
             vTemp[0]        = NULL;
             vTemp[1]        = NULL;
 
@@ -109,8 +111,9 @@ namespace lsp
             // Estimate the number of bytes to allocate
             size_t szof_pchannels   = align_size(sizeof(primary_channel_t) * nPChannels, DEFAULT_ALIGN);
             size_t szof_mchannels   = align_size(sizeof(mix_channel_t) * nMChannels, DEFAULT_ALIGN);
+            size_t szof_wet         = align_size(BUFFER_SIZE * sizeof(float), DEFAULT_ALIGN);
             size_t szof_temp        = align_size(BUFFER_SIZE * sizeof(float), DEFAULT_ALIGN);
-            size_t alloc            = szof_pchannels + szof_mchannels + szof_temp * nPChannels;
+            size_t alloc            = szof_pchannels + szof_mchannels + (szof_temp + szof_wet) * nPChannels;
 
             // Allocate memory-aligned data
             uint8_t *ptr            = alloc_aligned<uint8_t>(pData, alloc, DEFAULT_ALIGN);
@@ -125,6 +128,8 @@ namespace lsp
 
             for (size_t i=0; i<nPChannels; ++i)
             {
+                vWet[i]                 = reinterpret_cast<float *>(ptr);
+                ptr                    += szof_wet;
                 vTemp[i]                = reinterpret_cast<float *>(ptr);
                 ptr                    += szof_temp;
             }
@@ -262,6 +267,8 @@ namespace lsp
 
             vPChannels      = NULL;
             vMChannels      = NULL;
+            vWet[0]         = NULL;
+            vWet[1]         = NULL;
             vTemp[0]        = NULL;
             vTemp[1]        = NULL;
 
@@ -275,134 +282,211 @@ namespace lsp
 
         void mixer::update_sample_rate(long sr)
         {
-            // Update sample rate for the bypass processors
-            for (size_t i=0; i<nChannels; ++i)
+            for (size_t i=0; i<nPChannels; ++i)
             {
-                channel_t *c    = &vChannels[i];
-                c->sLine.init(dspu::millis_to_samples(sr, meta::mixer::DELAY_OUT_MAX_TIME));
+                primary_channel_t *c    = &vPChannels[i];
                 c->sBypass.init(sr);
             }
         }
 
         void mixer::update_settings()
         {
-            float out_gain          = pGainOut->value();
-            bool bypass             = pBypass->value() >= 0.5f;
-
-            for (size_t i=0; i<nChannels; ++i)
+            // Update settings for primary channels
+            for (size_t i=0; i<nPChannels; ++i)
             {
-                channel_t *c            = &vChannels[i];
+                primary_channel_t *c    = &vPChannels[i];
+                c->sBypass.set_bypass(c->pBypass->value() >= 0.5f);
 
-                // Store the parameters for each processor
-                c->fDryGain             = c->pDry->value() * out_gain;
-                c->fWetGain             = c->pWet->value() * out_gain;
-                c->nDelay               = c->pDelay->value();
+                float out_gain          = c->pOutGain->value();
+                c->fDry                 = c->pDry->value() * out_gain;
+                c->fWet                 = c->pWet->value() * out_gain;
+            }
 
-                // Update processors
-                c->sLine.set_delay(c->nDelay);
-                c->sBypass.set_bypass(bypass);
+            // Check soloing option
+            bool has_solo   = false;
+            for (size_t i=0; i<nMChannels; ++i)
+            {
+                mix_channel_t *c        = &vMChannels[i];
+                c->bSolo                = c->pSolo->value() >= 0.5f;
+                if (c->bSolo)
+                    has_solo                = true;
+            }
+
+            // Update channel configuration
+            for (size_t i=0; i<nMChannels; ++i)
+            {
+                mix_channel_t *c        = &vMChannels[i];
+
+                bool mute               = (c->pMute->value() >= 0.5f) || ((has_solo) && (!c->bSolo));
+                float gain              = (mute) ? c->pOutGain->value() : 0.0f;
+                if (c->pPhase->value() >= 0.5f)
+                    gain                    = -gain;
+
+                c->fGain[0]             = gain;
+                c->fGain[1]             = gain;
+            }
+
+            // Additional stereo control for stereo mixer
+            if (nPChannels > 1)
+            {
+                for (size_t i=0; i<nMChannels; i += 2)
+                {
+                    mix_channel_t *l        = &vMChannels[i];
+                    mix_channel_t *r        = &vMChannels[i+1];
+
+                    float pan_l             = l->pPan->value() * 0.005f;
+                    float pan_r             = r->pPan->value() * 0.005f;
+                    float balance           = l->pBalance->value() * 0.01f;
+                    float bal_l             = 1.0f - balance;
+                    float bal_r             = 1.0f + balance;
+
+                    l->fGain[0]            *= (0.5f - pan_l) * bal_l;
+                    l->fGain[1]            *= (0.5f + pan_l) * bal_r;
+                    r->fGain[0]            *= (0.5f + pan_r) * bal_l;
+                    r->fGain[1]            *= (0.5f - pan_r) * bal_r;
+                }
             }
         }
 
         void mixer::process(size_t samples)
         {
-            // Process each channel independently
-            for (size_t i=0; i<nChannels; ++i)
+            // Obtain audio buffers
+            for (size_t i=0; i<nPChannels; ++i)
             {
-                channel_t *c            = &vChannels[i];
+                primary_channel_t *c    = &vPChannels[i];
+                c->vIn                  = c->pIn->buffer<float>();
+                c->vOut                 = c->pOut->buffer<float>();
+            }
+            for (size_t i=0; i<nMChannels; ++i)
+                vMChannels[i].vIn       = vMChannels[i].pIn->buffer<float>();
 
-                // Get input and output buffers
-                const float *in         = c->pIn->buffer<float>();
-                float *out              = c->pOut->buffer<float>();
-                if ((in == NULL) || (out == NULL))
-                    continue;
+            // Main processing
+            while (samples > 0)
+            {
+                size_t to_process           = lsp_min(samples, BUFFER_SIZE);
 
-                // Input and output gain meters
-                float in_gain           = 0.0f;
-                float out_gain          = 0.0f;
-
-                // Process the channel with BUFFER_SIZE chunks
-                // Note: since input buffer pointer can be the same to output buffer pointer,
-                // we need to store the processed signal data to temporary buffer before
-                // it gets processed by the dspu::Bypass processor.
-                for (size_t n=0; n<samples; )
+                // Do the mixing stuff
+                if (nPChannels > 1)
                 {
-                    size_t count            = lsp_min(samples - n, BUFFER_SIZE);
+                    // Stereo
+                    // Clear wet buffer
+                    dsp::fill_zero(vWet[0], samples);
+                    dsp::fill_zero(vWet[1], samples);
 
-                    // Pre-process signal (fill buffer)
-                    c->sLine.process_ramping(vBuffer, in, c->fWetGain, c->nDelay, samples);
+                    // Apply mixing stuff
+                    for (size_t i=0; i<nMChannels; i += 2)
+                    {
+                        mix_channel_t *l        = &vMChannels[i];
+                        mix_channel_t *r        = &vMChannels[i+1];
 
-                    // Apply 'dry' control
-                    if (c->fDryGain > 0.0f)
-                        dsp::fmadd_k3(vBuffer, in, c->fDryGain, count);
+                        // Perform audio mixing of input stereo signal
+                        dsp::mul_k3(vTemp[0], l->vIn, l->fGain[0], to_process);
+                        dsp::mul_k3(vTemp[1], l->vIn, l->fGain[1], to_process);
+                        dsp::fmadd_k3(vTemp[0], r->vIn, r->fGain[0], to_process);
+                        dsp::fmadd_k3(vTemp[1], r->vIn, r->fGain[1], to_process);
 
-                    // Compute the gain of input and output signal.
-                    in_gain             = lsp_max(in_gain, dsp::abs_max(in, samples));
-                    out_gain            = lsp_max(out_gain, dsp::abs_max(vBuffer, samples));
+                        // Apply mixed channels to the wet signal
+                        dsp::add2(vWet[0], vTemp[0], to_process);
+                        dsp::add2(vWet[1], vTemp[1], to_process);
 
-                    // Process the
-                    //  - dry (unprocessed) signal stored in 'in'
-                    //  - wet (processed) signal stored in 'vBuffer'
-                    // Output the result to 'out' buffer
-                    c->sBypass.process(out, in, vBuffer, count);
+                        // Perform output level metering
+                        float out_l             = dsp::abs_max(vTemp[0], to_process);
+                        float out_r             = dsp::abs_max(vTemp[1], to_process);
+                        l->pOutLevel->set_value(out_l);
+                        r->pOutLevel->set_value(out_r);
+                    }
+                }
+                else
+                {
+                    // Mono
+                    dsp::fill_zero(vWet[0], samples);
 
-                    // Increment pointers
-                    in          +=  count;
-                    out         +=  count;
-                    n           +=  count;
+                    // Apply mixing stuff
+                    for (size_t i=0; i<nMChannels; ++i)
+                    {
+                        mix_channel_t *c        = &vMChannels[i];
+
+                        // Perform audio mixing of input stereo signal
+                        dsp::mul_k3(vTemp[0], c->vIn, c->fGain[0], to_process);
+
+                        // Apply mixed channels to the wet signal
+                        dsp::add2(vWet[0], vTemp[0], to_process);
+
+                        // Perform output level metering
+                        float out               = dsp::abs_max(vTemp[0], to_process);
+                        c->pOutLevel->set_value(out);
+                    }
                 }
 
-                // Update meters
-                c->pInLevel->set_value(in_gain);
-                c->pOutLevel->set_value(out_gain);
+                // Mix dry/wet
+                for (size_t i=0; i<nPChannels; ++i)
+                {
+                    primary_channel_t *c    = &vPChannels[i];
 
-                // Output the delay value in milliseconds
-                float millis = dspu::samples_to_millis(fSampleRate, c->nDelay);
-                c->pOutDelay->set_value(millis);
+                    dsp::mix2(vWet[i], c->vIn, c->fWet, c->fDry, to_process);
+                    c->sBypass.process(c->vOut, c->vIn, vWet[i], to_process);
+
+                    float in_lvl            = dsp::abs_max(c->vIn, to_process);
+                    float out_lvl           = dsp::abs_max(vWet[i], to_process);
+
+                    c->pInLevel->set_value(in_lvl);
+                    c->pOutLevel->set_value(out_lvl);
+                }
+
+                // Update counters and pointers
+                samples                    -= to_process;
+                for (size_t i=0; i<nPChannels; ++i)
+                {
+                    primary_channel_t *c    = &vPChannels[i];
+                    c->vIn                 += to_process;
+                    c->vOut                += to_process;
+                }
+                for (size_t i=0; i<nMChannels; ++i)
+                    vMChannels[i].vIn      += to_process;
             }
         }
 
         void mixer::dump(dspu::IStateDumper *v) const
         {
-            // It is very useful to dump plugin state for debug purposes
-            v->write("nChannels", nChannels);
-            v->begin_array("vChannels", vChannels, nChannels);
-            for (size_t i=0; i<nChannels; ++i)
-            {
-                channel_t *c            = &vChannels[i];
-
-                v->begin_object(c, sizeof(channel_t));
-                {
-                    v->write_object("sLine", &c->sLine);
-                    v->write_object("sBypass", &c->sBypass);
-
-                    v->write("nDelay", c->nDelay);
-                    v->write("fDryGain", c->fDryGain);
-                    v->write("fWetWain", c->fWetGain);
-
-                    v->write("pIn", c->pIn);
-                    v->write("pOut", c->pOut);
-                    v->write("pDelay", c->pDelay);
-                    v->write("pDry", c->pDry);
-                    v->write("pWet", c->pWet);
-
-                    v->write("pOutDelay", c->pOutDelay);
-                    v->write("pInLevel", c->pInLevel);
-                    v->write("pOutLevel", c->pOutLevel);
-                }
-                v->end_object();
-            }
-            v->end_array();
-
-            v->write("vBuffer", vBuffer);
-
-            v->write("pBypass", pBypass);
-            v->write("pGainOut", pGainOut);
-
-            v->write("pData", pData);
+//            // It is very useful to dump plugin state for debug purposes
+//            v->write("nChannels", nChannels);
+//            v->begin_array("vChannels", vChannels, nChannels);
+//            for (size_t i=0; i<nChannels; ++i)
+//            {
+//                channel_t *c            = &vChannels[i];
+//
+//                v->begin_object(c, sizeof(channel_t));
+//                {
+//                    v->write_object("sLine", &c->sLine);
+//                    v->write_object("sBypass", &c->sBypass);
+//
+//                    v->write("nDelay", c->nDelay);
+//                    v->write("fDryGain", c->fDryGain);
+//                    v->write("fWetWain", c->fWetGain);
+//
+//                    v->write("pIn", c->pIn);
+//                    v->write("pOut", c->pOut);
+//                    v->write("pDelay", c->pDelay);
+//                    v->write("pDry", c->pDry);
+//                    v->write("pWet", c->pWet);
+//
+//                    v->write("pOutDelay", c->pOutDelay);
+//                    v->write("pInLevel", c->pInLevel);
+//                    v->write("pOutLevel", c->pOutLevel);
+//                }
+//                v->end_object();
+//            }
+//            v->end_array();
+//
+//            v->write("vBuffer", vBuffer);
+//
+//            v->write("pBypass", pBypass);
+//            v->write("pGainOut", pGainOut);
+//
+//            v->write("pData", pData);
         }
 
-    }
-}
+    } /* namespace plugins */
+} /* namespace lsp */
 
 

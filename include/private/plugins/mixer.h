@@ -82,6 +82,7 @@ namespace lsp
                 size_t              nPChannels;         // Number of primary channels (1 for mono, 2 for stereo)
                 size_t              nMChannels;         // Number of mixer channels
                 bool                bMonoOut;           // Mono output (for stereo mixer)
+                float              *vWet[2];            // Wet buffers
                 float              *vTemp[2];           // Temporary buffers
 
                 plug::IPort        *pMonoOut;
