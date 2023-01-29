@@ -42,24 +42,24 @@ namespace lsp
         // Plugin metadata
         #define MIX_MONO_CHANNEL(id, label) \
             AUDIO_INPUT("in" id, "Audio input" label), \
-            SWITCH("ch" id, "Channel solo" label, 0.0f), \
+            SWITCH("cs" id, "Channel solo" label, 0.0f), \
             SWITCH("cm" id, "Channel mute" label, 0.0f), \
-            SWITCH("cp" id, "Channel phase invert" label, 0.0f), \
+            SWITCH("ci" id, "Channel phase invert" label, 0.0f), \
             LOG_CONTROL("cg" id, "Channel gain" label, U_GAIN_AMP, meta::mixer::CHANNEL_GAIN), \
             METER_GAIN("cl" id, "Channel signal level", GAIN_AMP_P_48_DB)
 
         #define MIX_STEREO_CHANNEL(id, label) \
-            AUDIO_INPUT("in" id "_l", "Audio input left" label), \
-            AUDIO_INPUT("in" id "_r", "Audio input right" label), \
-            SWITCH("ch" id, "Channel solo" label, 0.0f), \
+            AUDIO_INPUT("in" id "l", "Audio input left" label), \
+            AUDIO_INPUT("in" id "r", "Audio input right" label), \
+            SWITCH("cs" id, "Channel solo" label, 0.0f), \
             SWITCH("cm" id, "Channel mute" label, 0.0f), \
-            SWITCH("cp" id, "Channel phase invert" label, 0.0f), \
-            PAN_CTL("cpl" id, "Channel pan left" label, -100.0f), \
-            PAN_CTL("cpr" id, "Channel pan right" label, 100.0f), \
+            SWITCH("ci" id, "Channel phase invert" label, 0.0f), \
+            PAN_CTL("cp" id "l", "Channel pan left" label, -100.0f), \
+            PAN_CTL("cp" id "r", "Channel pan right" label, 100.0f), \
             PAN_CTL("cb" id, "Channel output balance" label, 0.0f), \
             LOG_CONTROL("cg" id, "Channel gain" label, U_GAIN_AMP, meta::mixer::CHANNEL_GAIN), \
-            METER_GAIN("cll" id, "Channel signal level left", GAIN_AMP_P_48_DB), \
-            METER_GAIN("clr" id, "Channel signal level right", GAIN_AMP_P_48_DB)
+            METER_GAIN("cl" id "l", "Channel signal level left", GAIN_AMP_P_48_DB), \
+            METER_GAIN("cl" id "r", "Channel signal level right", GAIN_AMP_P_48_DB)
 
         #define MIX_MONO_GLOBAL \
             DRY_GAIN(0.0f), \
@@ -77,6 +77,20 @@ namespace lsp
             METER_GAIN("ilm_r", "Input level meter right", GAIN_AMP_P_48_DB), \
             METER_GAIN("olm_l", "Output level meter left", GAIN_AMP_P_48_DB), \
             METER_GAIN("olm_r", "Output level meter right", GAIN_AMP_P_48_DB)
+
+        static const port_t mixer_x4_mono_ports[] =
+        {
+            PORTS_MONO_PLUGIN,
+            BYPASS,
+            MIX_MONO_GLOBAL,
+
+            MIX_MONO_CHANNEL("_1", "1"),
+            MIX_MONO_CHANNEL("_2", "2"),
+            MIX_MONO_CHANNEL("_3", "3"),
+            MIX_MONO_CHANNEL("_4", "4"),
+
+            PORTS_END
+        };
 
         static const port_t mixer_x8_mono_ports[] =
         {
@@ -118,6 +132,20 @@ namespace lsp
             MIX_MONO_CHANNEL("_14", "14"),
             MIX_MONO_CHANNEL("_15", "15"),
             MIX_MONO_CHANNEL("_16", "16"),
+
+            PORTS_END
+        };
+
+        static const port_t mixer_x4_stereo_ports[] =
+        {
+            PORTS_STEREO_PLUGIN,
+            BYPASS,
+            MIX_STEREO_GLOBAL,
+
+            MIX_STEREO_CHANNEL("_1", "1"),
+            MIX_STEREO_CHANNEL("_2", "2"),
+            MIX_STEREO_CHANNEL("_3", "3"),
+            MIX_STEREO_CHANNEL("_4", "4"),
 
             PORTS_END
         };
@@ -179,9 +207,33 @@ namespace lsp
             "" // TODO: write plugin description, should be the same to the english version in 'bundles.json'
         };
 
+        const plugin_t mixer_x4_mono =
+        {
+            "Mischer x4 Mono",
+            "Mixer x4 Mono",
+            "M4M",
+            &developers::v_sadovnikov,
+            "mixer_x4_mono",
+            LSP_LV2_URI("mixer_x4_mono"),
+            LSP_LV2UI_URI("mixer_x4_mono"),
+            "m04m",
+            LSP_LADSPA_MIXER_BASE + 0,
+            LSP_LADSPA_URI("mixer_x4_mono"),
+            LSP_CLAP_URI("mixer_x4_mono"),
+            LSP_PLUGINS_MIXER_VERSION,
+            plugin_classes,
+            clap_features_mono,
+            E_DUMP_STATE,
+            mixer_x4_mono_ports,
+            "util/mixer/mono.xml",
+            NULL,
+            mono_plugin_port_groups,
+            &mixer_bundle
+        };
+
         const plugin_t mixer_x8_mono =
         {
-            "Mixer x8 Mono",
+            "Mischer x8 Mono",
             "Mixer x8 Mono",
             "M8M",
             &developers::v_sadovnikov,
@@ -197,7 +249,7 @@ namespace lsp
             clap_features_mono,
             E_DUMP_STATE,
             mixer_x8_mono_ports,
-            "util/mixer.xml",
+            "util/mixer/mono.xml",
             NULL,
             mono_plugin_port_groups,
             &mixer_bundle
@@ -205,7 +257,7 @@ namespace lsp
 
         const plugin_t mixer_x16_mono =
         {
-            "Mixer x16 Mono",
+            "Mischer x16 Mono",
             "Mixer x16 Mono",
             "M16M",
             &developers::v_sadovnikov,
@@ -221,7 +273,31 @@ namespace lsp
             clap_features_mono,
             E_DUMP_STATE,
             mixer_x16_mono_ports,
-            "util/mixer.xml",
+            "util/mixer/mono.xml",
+            NULL,
+            mono_plugin_port_groups,
+            &mixer_bundle
+        };
+
+        const plugin_t mixer_x4_stereo =
+        {
+            "Mischer x4 Stereo",
+            "Mixer x4 Stereo",
+            "M4S",
+            &developers::v_sadovnikov,
+            "mixer_x4_stereo",
+            LSP_LV2_URI("mixer_x4_stereo"),
+            LSP_LV2UI_URI("mixer_x4_stereo"),
+            "m04s",
+            LSP_LADSPA_MIXER_BASE + 2,
+            LSP_LADSPA_URI("mixer_x4_stereo"),
+            LSP_CLAP_URI("mixer_x4_stereo"),
+            LSP_PLUGINS_MIXER_VERSION,
+            plugin_classes,
+            clap_features_stereo,
+            E_DUMP_STATE,
+            mixer_x4_stereo_ports,
+            "util/mixer/stereo.xml",
             NULL,
             mono_plugin_port_groups,
             &mixer_bundle
@@ -229,7 +305,7 @@ namespace lsp
 
         const plugin_t mixer_x8_stereo =
         {
-            "Mixer x8 Stereo",
+            "Mischer x8 Stereo",
             "Mixer x8 Stereo",
             "M8S",
             &developers::v_sadovnikov,
@@ -245,7 +321,7 @@ namespace lsp
             clap_features_stereo,
             E_DUMP_STATE,
             mixer_x8_stereo_ports,
-            "util/mixer.xml",
+            "util/mixer/stereo.xml",
             NULL,
             mono_plugin_port_groups,
             &mixer_bundle
@@ -253,7 +329,7 @@ namespace lsp
 
         const plugin_t mixer_x16_stereo =
         {
-            "Mixer x16 Stereo",
+            "Mischer x16 Stereo",
             "Mixer x16 Stereo",
             "M16s",
             &developers::v_sadovnikov,
@@ -269,7 +345,7 @@ namespace lsp
             clap_features_stereo,
             E_DUMP_STATE,
             mixer_x16_stereo_ports,
-            "util/mixer.xml",
+            "util/mixer/stereo.xml",
             NULL,
             mono_plugin_port_groups,
             &mixer_bundle

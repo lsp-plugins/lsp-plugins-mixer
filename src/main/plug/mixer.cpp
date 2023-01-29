@@ -46,8 +46,10 @@ namespace lsp
         // Plugin factory
         static const meta::plugin_t *plugins[] =
         {
+            &meta::mixer_x4_mono,
             &meta::mixer_x8_mono,
             &meta::mixer_x16_mono,
+            &meta::mixer_x4_stereo,
             &meta::mixer_x8_stereo,
             &meta::mixer_x16_stereo
         };
@@ -57,7 +59,7 @@ namespace lsp
             return new mixer(meta);
         }
 
-        static plug::Factory factory(plugin_factory, plugins, 4);
+        static plug::Factory factory(plugin_factory, plugins, 6);
 
         //---------------------------------------------------------------------
         // Implementation

@@ -41,8 +41,10 @@ namespace lsp
         } mixer;
 
         // Plugin type metadata
+        extern const plugin_t mixer_x4_mono;
         extern const plugin_t mixer_x8_mono;
         extern const plugin_t mixer_x16_mono;
+        extern const plugin_t mixer_x4_stereo;
         extern const plugin_t mixer_x8_stereo;
         extern const plugin_t mixer_x16_stereo;
     } /* namespace meta */

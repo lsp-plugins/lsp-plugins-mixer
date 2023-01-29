@@ -30,13 +30,15 @@ namespace lsp
         // Plugin UI factory
         static const meta::plugin_t *plugin_uis[] =
         {
+            &meta::mixer_x4_mono,
             &meta::mixer_x8_mono,
             &meta::mixer_x16_mono,
+            &meta::mixer_x4_stereo,
             &meta::mixer_x8_stereo,
             &meta::mixer_x16_stereo
         };
 
-        static ui::Factory factory(plugin_uis, 4);
+        static ui::Factory factory(plugin_uis, 6);
 
     } /* namespace plugui */
 } /* namespace lsp */
