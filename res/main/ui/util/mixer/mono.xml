@@ -1,5 +1,102 @@
 <plugin resizable="true">
-	<grid rows="5" cols="5" spacing="4">
+	<ui:set id="channels" value="${(ex :in_16) ? 16 : (ex :in_8) ? 8 : 4}"/>
+
+	<grid rows="7" cols="${2 * :channels + 2}" transpose="true" bg.color="bg_schema">
+		<!-- Input channels -->
+		<ui:for id="i" first="1" count=":channels">
+			<!-- Column 1 -->
+			<cell cols="2" pad.v="4">
+				<label/>
+			</cell>
+			<cell cols="2" bg.color="bg" pad.v="2" vreduce="true" vexpand="false">
+				<hsep/>
+			</cell>
+			<!-- <ui:with bright="(:cm_${i} ieq 0) ? 1 : 0.75" bg.bright="(:cm_${i} ieq 0) ? 1.0 : :const_bg_darken"> -->
+			<!-- <ui:with bg.bright="(:cm_${i} ieq 0) || (:cs_${i} igt 0 and :cm_${i} ieq 0) || (:cs igt 0) ? 1.0 : :const_bg_darken" > <ui:with bg.bright="(:cm_${i} ieq 0) || (:cs_${i} igt 0 and :cm_${i} ieq 0) || (:cs_${i} igt 0) ? 1.0 : :const_bg_darken">-->
+
+			<ui:with bright="(:cm_${i} ieq 0) ? 1 : 0.75" bg.bright="(:cm_${i} ieq 0) ? 1.0 : :const_bg_darken">
+				<cell pad.v="4">
+					<label text="labels.chan.num_id" text:id="${i}"/>
+				</cell>
+				<cell bg.color="bg" pad.v="2" vreduce="true" vexpand="false">
+					<hsep/>
+				</cell>
+				<cell pad.v="4" pad.h="6">
+					<hbox>
+						<button id="cs_${i}" text="labels.chan.S_olo" ui:inject="Button_green_8" font.size="8" pad.r="6" hfill="true" expand="false"/>
+						<button id="cm_${i}" text="labels.chan.M_ute" ui:inject="Button_red_8" font.size="8" pad.r="6" hfill="true" expand="false"/>
+						<button id="ci_${i}" text="labels.chan.P_hase" ui:inject="Button_yellow_8" font.size="8" hfill="true" expand="false"/>
+					</hbox>
+				</cell>
+				<cell bg.color="bg" pad.v="2" vreduce="true" vexpand="false">
+					<hsep/>
+				</cell>
+
+				<hbox vexpand="true">
+					<vbox >
+						<fader id="cg_${i}" vexpand="true" angle="1" pad.t="4" scolor="(:cm_${i} ieq 0) ? 'fader' : 'cycle_inactive'"/>
+						<value id="cg_${i}" vreduce="true" width.min="48" pad.b="4"/>
+					</vbox>
+
+					<ledmeter height.min="256" vexpand="true" angle="1">
+						<ledchannel id="cl_${i}" min="-72 db" max="12 db" log="true" type="rms_peak" peak.visibility="true" value.color="(:cm_${i} ieq 0) ? 'mono' : 'cycle_inactive'"/>
+					</ledmeter>
+				</hbox>
+				<!-- Column 3 -->
+				<cell rows="7" bg.color="bg" pad.h="2" hreduce="true" hexpand="false">
+					<vsep/>
+				</cell>
+			</ui:with>
+		</ui:for>
+
+		<!-- Master section -->
+		<!-- Column 1 -->
+		<cell cols="2" rows="3">
+			<label text="labels.chan.output" />
+		</cell>
+		<cell cols="2" bg.color="bg" pad.v="2" vreduce="true" vexpand="false">
+			<hsep/>
+		</cell>
+
+		<cell rows="10" cols="2" expand="false">
+
+			<vbox>
+				<grid rows="2" cols="5">
+					<cell cols="5">
+						<grid rows="4" cols="2">
+							<label text="labels.signal.dry" pad.v="4" pad.l="6"/>
+							<label text="labels.signal.wet" pad.v="4" pad.r="6"/>
+							<knob id="dry" size="20" scolor="dry" pad.l="6"/>
+							<knob id="wet" size="20" scolor="wet" pad.r="6"/>
+							<value id="dry" sline="true" pad.l="6" width.min="48" pad.b="4"/>
+							<value id="wet" sline="true" pad.r="6" width.min="48" pad.b="4"/>
+
+							<cell cols="2" bg.color="bg" pad.v="2" vreduce="true" vexpand="false">
+								<hsep/>
+							</cell>
+						</grid>
+					</cell>
+					<vbox vexpand="true" bg.color="bg_schema">
+						<label text="labels.chan.in" pad.b="3" pad.t="3"/>
+						<ledmeter height.min="256" vexpand="true" angle="1">
+							<ledchannel id="ilm" min="-72 db" max="12 db" log="true" type="rms_peak" peak.visibility="true" value.color="mono"/>
+						</ledmeter>
+					</vbox>
+					<vsep bg.color="bg" pad.h="2" hreduce="true" hexpand="false"/>
+					<vbox>
+						<fader id="g_out" vexpand="true" angle="1" pad.t="4"/>
+						<value id="g_out" vreduce="true" width.min="32" pad.b="4"/>
+					</vbox>
+					<vsep bg.color="bg" pad.h="2" hreduce="true" hexpand="false"/>
+					<vbox vexpand="true" bg.color="bg_schema">
+						<label text="labels.chan.out" pad.b="3" pad.t="3"/>
+						<ledmeter height.min="256" vexpand="true" angle="1">
+							<ledchannel id="olm" min="-72 db" max="12 db" log="true" type="rms_peak" peak.visibility="true" value.color="mono"/>
+						</ledmeter>
+					</vbox>
+				</grid>
+			</vbox>
+		</cell>
 
 	</grid>
 </plugin>
