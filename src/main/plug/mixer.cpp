@@ -147,10 +147,14 @@ namespace lsp
 
                 c->vIn          = NULL;
                 c->vOut         = NULL;
+                c->fOldDry      = GAIN_AMP_0_DB;
                 c->fDry         = GAIN_AMP_0_DB;
+                c->fOldWet      = GAIN_AMP_0_DB;
                 c->fWet         = GAIN_AMP_0_DB;
-                c->fOutGain[0]  = GAIN_AMP_0_DB;
-                c->fOutGain[1]  = GAIN_AMP_0_DB;
+                c->fOldGain[0]  = GAIN_AMP_0_DB;
+                c->fOldGain[1]  = GAIN_AMP_0_DB;
+                c->fGain[0]     = GAIN_AMP_0_DB;
+                c->fGain[1]     = GAIN_AMP_0_DB;
 
                 c->pIn          = NULL;
                 c->pOut         = NULL;
@@ -166,8 +170,11 @@ namespace lsp
                 mix_channel_t *c = &vMChannels[i];
 
                 c->vIn          = NULL;
+                c->fOldGain[0]  = GAIN_AMP_M_INF_DB;
+                c->fOldGain[1]  = GAIN_AMP_M_INF_DB;
                 c->fGain[0]     = GAIN_AMP_M_INF_DB;
                 c->fGain[1]     = GAIN_AMP_M_INF_DB;
+                c->fOldPostGain = GAIN_AMP_0_DB;
                 c->fPostGain    = GAIN_AMP_0_DB;
                 c->bSolo        = false;
 
@@ -307,7 +314,9 @@ namespace lsp
                 c->sBypass.set_bypass(bypass);
 
                 float out_gain          = c->pOutGain->value();
+                c->fOldDry              = c->fDry;
                 c->fDry                 = c->pDry->value() * out_gain;
+                c->fOldWet              = c->fWet;
                 c->fWet                 = c->pWet->value() * out_gain;
             }
 
@@ -322,16 +331,25 @@ namespace lsp
                 float bal_r             = 1.0f + balance;
                 float pan               = (pMonoOut->value() >= 0.5f) ? 0.5f : 1.0f;
 
-                l->fOutGain[0]          = (pan) * bal_l;
-                l->fOutGain[1]          = (1.0f - pan) * bal_r;
-                r->fOutGain[0]          = (1.0f - pan) * bal_l;
-                r->fOutGain[1]          = (pan) * bal_r;
+                l->fOldGain[0]          = l->fGain[0];
+                l->fOldGain[1]          = l->fGain[1];
+                r->fOldGain[0]          = r->fGain[0];
+                r->fOldGain[1]          = r->fGain[1];
+
+                l->fGain[0]             = (pan) * bal_l;
+                l->fGain[1]             = (1.0f - pan) * bal_r;
+                r->fGain[0]             = (1.0f - pan) * bal_l;
+                r->fGain[1]             = (pan) * bal_r;
             }
             else
             {
                 primary_channel_t *c    = &vPChannels[0];
-                c->fOutGain[0]          = GAIN_AMP_0_DB;
-                c->fOutGain[1]          = GAIN_AMP_0_DB;
+
+                c->fOldGain[0]          = c->fGain[0];
+                c->fOldGain[1]          = c->fGain[1];
+
+                c->fGain[0]             = GAIN_AMP_0_DB;
+                c->fGain[1]             = GAIN_AMP_0_DB;
             }
 
             // Check soloing option
@@ -354,6 +372,10 @@ namespace lsp
                 float post_gain         = (mute) ? 0.0f : 1.0f;
                 if (c->pPhase->value() >= 0.5f)
                     post_gain               = -post_gain;
+
+                c->fOldGain[0]          = c->fGain[0];
+                c->fOldGain[1]          = c->fGain[1];
+                c->fOldPostGain         = c->fPostGain;
 
                 c->fGain[0]             = gain;
                 c->fGain[1]             = gain;
@@ -380,6 +402,32 @@ namespace lsp
                     r->fGain[1]            *= (0.5f + pan_r) * bal_r;
                 }
             }
+        }
+
+        void mixer::ramp_mul_k3(float *dst, float *src, float prev, float next, size_t count)
+        {
+            if (prev == next)
+            {
+                dsp::mul_k3(dst, src, prev, count);
+                return;
+            }
+
+            float step = (next - prev) / count;
+            for (size_t i=0; i<count; ++i)
+                dst[i] = src[i] * (prev + step * i);
+        }
+
+        void mixer::ramp_fmadd_k3(float *dst, float *src, float prev, float next, size_t count)
+        {
+            if (prev == next)
+            {
+                dsp::fmadd_k3(dst, src, prev, count);
+                return;
+            }
+
+            float step = (next - prev) / count;
+            for (size_t i=0; i<count; ++i)
+                dst[i] = dst[i] + src[i] * (prev + step * i);
         }
 
         void mixer::process(size_t samples)
@@ -414,10 +462,10 @@ namespace lsp
                         mix_channel_t *r        = &vMChannels[i+1];
 
                         // Perform audio mixing of input stereo signal
-                        dsp::mul_k3(vTemp[0], l->vIn, l->fGain[0], to_process);
-                        dsp::mul_k3(vTemp[1], l->vIn, l->fGain[1], to_process);
-                        dsp::fmadd_k3(vTemp[0], r->vIn, r->fGain[0], to_process);
-                        dsp::fmadd_k3(vTemp[1], r->vIn, r->fGain[1], to_process);
+                        ramp_mul_k3(vTemp[0], l->vIn, l->fOldGain[0], l->fGain[0], to_process);
+                        ramp_mul_k3(vTemp[1], l->vIn, l->fOldGain[1], l->fGain[1], to_process);
+                        ramp_fmadd_k3(vTemp[0], r->vIn, r->fOldGain[0], r->fGain[0], to_process);
+                        ramp_fmadd_k3(vTemp[1], r->vIn, r->fOldGain[1], r->fGain[1], to_process);
 
                         // Perform output level metering
                         float out_l             = dsp::abs_max(vTemp[0], to_process);
@@ -426,23 +474,42 @@ namespace lsp
                         r->pOutLevel->set_value(out_r);
 
                         // Apply mixed channels to the wet signal
-                        dsp::fmadd_k3(vWet[0], vTemp[0], l->fPostGain, to_process);
-                        dsp::fmadd_k3(vWet[1], vTemp[1], r->fPostGain, to_process);
+                        ramp_fmadd_k3(vWet[0], vTemp[0], l->fOldPostGain, l->fPostGain, to_process);
+                        ramp_fmadd_k3(vWet[1], vTemp[1], r->fOldPostGain, r->fPostGain, to_process);
+
+                        // Renew old parameters
+                        l->fOldGain[0]          = l->fGain[0];
+                        l->fOldGain[1]          = l->fGain[1];
+                        l->fOldPostGain         = l->fPostGain;
+                        r->fOldGain[0]          = r->fGain[0];
+                        r->fOldGain[1]          = r->fGain[1];
+                        r->fOldPostGain         = r->fPostGain;
                     }
 
                     // Mix dry/wet
                     primary_channel_t *pl   = &vPChannels[0];
                     primary_channel_t *pr   = &vPChannels[1];
-                    dsp::mix2(vWet[0], pl->vIn, pl->fWet, pl->fDry, to_process);
-                    dsp::mix2(vWet[1], pr->vIn, pr->fWet, pr->fDry, to_process);
+
+                    ramp_mul_k3(vTemp[0], vWet[0], pl->fOldWet, pl->fWet, to_process);
+                    ramp_mul_k3(vTemp[1], vWet[1], pr->fOldWet, pl->fWet, to_process);
+                    ramp_fmadd_k3(vTemp[0], pl->vIn, pl->fOldDry, pl->fDry, to_process);
+                    ramp_fmadd_k3(vTemp[1], pr->vIn, pr->fOldDry, pl->fDry, to_process);
 
                     // Apply balance and mono
-                    dsp::mul_k3(vTemp[0], vWet[0], pl->fOutGain[0], to_process);
-                    dsp::mul_k3(vTemp[1], vWet[0], pl->fOutGain[1], to_process);
-                    dsp::fmadd_k3(vTemp[0], vWet[1], pr->fOutGain[0], to_process);
-                    dsp::fmadd_k3(vTemp[1], vWet[1], pr->fOutGain[1], to_process);
-                    dsp::copy(vWet[0], vTemp[0], to_process);
-                    dsp::copy(vWet[1], vTemp[1], to_process);
+                    ramp_mul_k3(vWet[0], vTemp[0], pl->fOldGain[0], pl->fGain[0], to_process);
+                    ramp_mul_k3(vWet[1], vTemp[0], pl->fOldGain[1], pl->fGain[1], to_process);
+                    ramp_fmadd_k3(vWet[0], vTemp[1], pr->fOldGain[0], pr->fGain[0], to_process);
+                    ramp_fmadd_k3(vWet[1], vTemp[1], pr->fOldGain[1], pr->fGain[1], to_process);
+
+                    // Renew old parameters
+                    pl->fOldWet     = pl->fWet;
+                    pl->fOldDry     = pl->fDry;
+                    pl->fOldGain[0] = pl->fGain[0];
+                    pl->fOldGain[1] = pl->fGain[1];
+                    pr->fOldWet     = pr->fWet;
+                    pr->fOldDry     = pr->fDry;
+                    pr->fOldGain[0] = pr->fGain[0];
+                    pr->fOldGain[1] = pr->fGain[1];
                 }
                 else
                 {
@@ -463,14 +530,26 @@ namespace lsp
 
                         // Apply mixed channels to the wet signal
                         dsp::fmadd_k3(vWet[0], vTemp[0], c->fPostGain, to_process);
+
+                        // Renew old parameters
+                        c->fOldGain[0]          = c->fGain[0];
+                        c->fOldGain[1]          = c->fGain[1];
+                        c->fOldPostGain         = c->fPostGain;
                     }
 
                     // Mix dry/wet
                     primary_channel_t *pc   = &vPChannels[0];
-                    dsp::mix2(vWet[0], pc->vIn, pc->fWet, pc->fDry, to_process);
+                    ramp_mul_k3(vWet[0], vWet[0], pc->fOldWet, pc->fWet, to_process);
+                    ramp_fmadd_k3(vWet[0], pc->vIn, pc->fDry, pc->fOldDry, to_process);
+
+                    // Renew old parameters
+                    pc->fOldWet     = pc->fWet;
+                    pc->fOldDry     = pc->fDry;
+                    pc->fOldGain[0] = pc->fGain[0];
+                    pc->fOldGain[1] = pc->fGain[1];
                 }
 
-                // Mix dry/wet
+                // Apply bypass and metering
                 for (size_t i=0; i<nPChannels; ++i)
                 {
                     primary_channel_t *c    = &vPChannels[i];

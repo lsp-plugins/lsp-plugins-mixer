@@ -47,9 +47,12 @@ namespace lsp
 
                     float              *vIn;            // Input buffer pointer
                     float              *vOut;           // Output buffer pointer
+                    float               fOldDry;        // Old dry signal amount
                     float               fDry;           // Dry signal amount
+                    float               fOldWet;        // Old wet signal amount
                     float               fWet;           // Wet signal amount
-                    float               fOutGain[2];    // Output gain (balanced)
+                    float               fOldGain[2];    // Old output gain
+                    float               fGain[2];       // Output gain (balanced)
 
                     plug::IPort        *pIn;            // Input data port
                     plug::IPort        *pOut;           // Output data port
@@ -63,7 +66,9 @@ namespace lsp
                 typedef struct mix_channel_t
                 {
                     float              *vIn;            // Input buffer
+                    float               fOldGain[2];    // Old gain value
                     float               fGain[2];       // Gain for left and right outputs
+                    float               fOldPostGain;   // Old post-gain value (after metering stage)
                     float               fPostGain;      // Post-gain (after metering stage)
                     bool                bSolo;          // Solo flag
 
@@ -91,6 +96,10 @@ namespace lsp
                 plug::IPort        *pBalance;           // Balance control
 
                 uint8_t            *pData;              // Allocated data
+
+            protected:
+                static void         ramp_mul_k3(float *dst, float *src, float prev, float next, size_t count);
+                static void         ramp_fmadd_k3(float *dst, float *src, float prev, float next, size_t count);
 
             public:
                 explicit mixer(const meta::plugin_t *meta);
