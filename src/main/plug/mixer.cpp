@@ -149,6 +149,8 @@ namespace lsp
                 c->vOut         = NULL;
                 c->fDry         = GAIN_AMP_0_DB;
                 c->fWet         = GAIN_AMP_0_DB;
+                c->fOutGain[0]  = GAIN_AMP_0_DB;
+                c->fOutGain[1]  = GAIN_AMP_0_DB;
 
                 c->pIn          = NULL;
                 c->pOut         = NULL;
@@ -164,8 +166,9 @@ namespace lsp
                 mix_channel_t *c = &vMChannels[i];
 
                 c->vIn          = NULL;
-                c->fGain[0]     = 0.0f;
-                c->fGain[1]     = 0.0f;
+                c->fGain[0]     = GAIN_AMP_M_INF_DB;
+                c->fGain[1]     = GAIN_AMP_M_INF_DB;
+                c->fPostGain    = GAIN_AMP_0_DB;
                 c->bSolo        = false;
 
                 c->pIn          = NULL;
@@ -308,6 +311,29 @@ namespace lsp
                 c->fWet                 = c->pWet->value() * out_gain;
             }
 
+            // Apply balance
+            if (nPChannels > 1)
+            {
+                primary_channel_t *l    = &vPChannels[0];
+                primary_channel_t *r    = &vPChannels[1];
+
+                float balance           = pBalance->value() * 0.01f;
+                float bal_l             = 1.0f - balance;
+                float bal_r             = 1.0f + balance;
+                float pan               = (pMonoOut->value() >= 0.5f) ? 0.5f : 1.0f;
+
+                l->fOutGain[0]          = (pan) * bal_l;
+                l->fOutGain[1]          = (1.0f - pan) * bal_r;
+                r->fOutGain[0]          = (1.0f - pan) * bal_l;
+                r->fOutGain[1]          = (pan) * bal_r;
+            }
+            else
+            {
+                primary_channel_t *c    = &vPChannels[0];
+                c->fOutGain[0]          = GAIN_AMP_0_DB;
+                c->fOutGain[1]          = GAIN_AMP_0_DB;
+            }
+
             // Check soloing option
             bool has_solo   = false;
             for (size_t i=0; i<nMChannels; ++i)
@@ -324,12 +350,14 @@ namespace lsp
                 mix_channel_t *c        = &vMChannels[i];
 
                 bool mute               = (c->pMute->value() >= 0.5f) || ((has_solo) && (!c->bSolo));
-                float gain              = (mute) ? c->pOutGain->value() : 0.0f;
+                float gain              = c->pOutGain->value();
+                float post_gain         = (mute) ? 0.0f : 1.0f;
                 if (c->pPhase->value() >= 0.5f)
-                    gain                    = -gain;
+                    post_gain               = -post_gain;
 
                 c->fGain[0]             = gain;
                 c->fGain[1]             = gain;
+                c->fPostGain            = post_gain;
             }
 
             // Additional stereo control for stereo mixer
@@ -348,8 +376,8 @@ namespace lsp
 
                     l->fGain[0]            *= (0.5f - pan_l) * bal_l;
                     l->fGain[1]            *= (0.5f + pan_l) * bal_r;
-                    r->fGain[0]            *= (0.5f + pan_r) * bal_l;
-                    r->fGain[1]            *= (0.5f - pan_r) * bal_r;
+                    r->fGain[0]            *= (0.5f - pan_r) * bal_l;
+                    r->fGain[1]            *= (0.5f + pan_r) * bal_r;
                 }
             }
         }
@@ -391,16 +419,30 @@ namespace lsp
                         dsp::fmadd_k3(vTemp[0], r->vIn, r->fGain[0], to_process);
                         dsp::fmadd_k3(vTemp[1], r->vIn, r->fGain[1], to_process);
 
-                        // Apply mixed channels to the wet signal
-                        dsp::add2(vWet[0], vTemp[0], to_process);
-                        dsp::add2(vWet[1], vTemp[1], to_process);
-
                         // Perform output level metering
                         float out_l             = dsp::abs_max(vTemp[0], to_process);
                         float out_r             = dsp::abs_max(vTemp[1], to_process);
                         l->pOutLevel->set_value(out_l);
                         r->pOutLevel->set_value(out_r);
+
+                        // Apply mixed channels to the wet signal
+                        dsp::fmadd_k3(vWet[0], vTemp[0], l->fPostGain, to_process);
+                        dsp::fmadd_k3(vWet[1], vTemp[1], r->fPostGain, to_process);
                     }
+
+                    // Mix dry/wet
+                    primary_channel_t *pl   = &vPChannels[0];
+                    primary_channel_t *pr   = &vPChannels[1];
+                    dsp::mix2(vWet[0], pl->vIn, pl->fWet, pl->fDry, to_process);
+                    dsp::mix2(vWet[1], pr->vIn, pr->fWet, pr->fDry, to_process);
+
+                    // Apply balance and mono
+                    dsp::mul_k3(vTemp[0], vWet[0], pl->fOutGain[0], to_process);
+                    dsp::mul_k3(vTemp[1], vWet[0], pl->fOutGain[1], to_process);
+                    dsp::fmadd_k3(vTemp[0], vWet[1], pr->fOutGain[0], to_process);
+                    dsp::fmadd_k3(vTemp[1], vWet[1], pr->fOutGain[1], to_process);
+                    dsp::copy(vWet[0], vTemp[0], to_process);
+                    dsp::copy(vWet[1], vTemp[1], to_process);
                 }
                 else
                 {
@@ -415,13 +457,17 @@ namespace lsp
                         // Perform audio mixing of input stereo signal
                         dsp::mul_k3(vTemp[0], c->vIn, c->fGain[0], to_process);
 
-                        // Apply mixed channels to the wet signal
-                        dsp::add2(vWet[0], vTemp[0], to_process);
-
                         // Perform output level metering
                         float out               = dsp::abs_max(vTemp[0], to_process);
                         c->pOutLevel->set_value(out);
+
+                        // Apply mixed channels to the wet signal
+                        dsp::fmadd_k3(vWet[0], vTemp[0], c->fPostGain, to_process);
                     }
+
+                    // Mix dry/wet
+                    primary_channel_t *pc   = &vPChannels[0];
+                    dsp::mix2(vWet[0], pc->vIn, pc->fWet, pc->fDry, to_process);
                 }
 
                 // Mix dry/wet
@@ -429,7 +475,6 @@ namespace lsp
                 {
                     primary_channel_t *c    = &vPChannels[i];
 
-                    dsp::mix2(vWet[i], c->vIn, c->fWet, c->fDry, to_process);
                     c->sBypass.process(c->vOut, c->vIn, vWet[i], to_process);
 
                     float in_lvl            = dsp::abs_max(c->vIn, to_process);

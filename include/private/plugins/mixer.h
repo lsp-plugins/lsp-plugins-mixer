@@ -49,6 +49,7 @@ namespace lsp
                     float              *vOut;           // Output buffer pointer
                     float               fDry;           // Dry signal amount
                     float               fWet;           // Wet signal amount
+                    float               fOutGain[2];    // Output gain (balanced)
 
                     plug::IPort        *pIn;            // Input data port
                     plug::IPort        *pOut;           // Output data port
@@ -63,6 +64,7 @@ namespace lsp
                 {
                     float              *vIn;            // Input buffer
                     float               fGain[2];       // Gain for left and right outputs
+                    float               fPostGain;      // Post-gain (after metering stage)
                     bool                bSolo;          // Solo flag
 
                     plug::IPort        *pIn;            // Input data port
