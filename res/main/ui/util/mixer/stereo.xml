@@ -40,7 +40,8 @@
 				<cell cols="2" pad.t="4">
 					<label text="labels.signal.pan"/>
 				</cell>
-				<knob id="cp_${i}l" size="16" scolor="(:cm_${i} ieq 0) ? 'left' : 'cycle_inactive'" pad.h="6"/>
+				
+				<knob id="cp_${i}l" size="16" scolor="!(:cm_${i} or ((${has_solo}) and !:cs_${i})) ? 'left' : 'cycle_inactive'" pad.h="6"/>
 				<value id="cp_${i}l" detailed="false" pad.b="4" pad.r="6"/>
 				<cell cols="2" bg.color="bg" pad.v="2" vreduce="true" vexpand="false">
 					<hsep/>
@@ -49,7 +50,10 @@
 					<label text="labels.balance"/>
 				</cell>
 				<cell cols="2" pad.h="6">
-					<fader id="cb_${i}" ui:inject="Fader_balance" bcolor="(:cm_${i} ieq 0) ? 'balance' : 'cycle_inactive'" scolor="(:cm_${i} ieq 0) ? 'balance' : 'cycle_inactive'"/>
+					<fader id="cb_${i}" 
+						   ui:inject="Fader_balance" 
+						   bcolor="!(:cm_${i} or ((${has_solo}) and !:cs_${i})) ? 'balance' : 'cycle_inactive'" 
+						   scolor="!(:cm_${i} or ((${has_solo}) and !:cs_${i})) ? 'balance' : 'cycle_inactive'"/>
 				</cell>
 				<cell cols="2" pad.v="4">
 					<value id="cb_${i}" same.line="true"/>
@@ -57,16 +61,30 @@
 				<cell cols="2" bg.color="bg" pad.v="2" vreduce="true" vexpand="false">
 					<hsep/>
 				</cell>
-				<fader id="cg_${i}" vexpand="true" angle="1" pad.t="4" scolor="(:cm_${i} ieq 0) ? 'fader' : 'cycle_inactive'"/>
+				<fader id="cg_${i}" vexpand="true" angle="1" pad.t="4" scolor="!(:cm_${i} or ((${has_solo}) and !:cs_${i})) ? 'fader' : 'cycle_inactive'"/>
 				<value id="cg_${i}" vreduce="true" width.min="48" pad.b="4"/>
 	
 				<!-- Column 2 -->
-				<knob id="cp_${i}r" size="16" scolor="(:cm_${i} ieq 0) ? 'right' : 'cycle_inactive'" pad.r="6"/>
+				<knob id="cp_${i}r" size="16" scolor="!(:cm_${i} or ((${has_solo}) and !:cs_${i})) ? 'right' : 'cycle_inactive'" pad.r="6"/>
 				<value id="cp_${i}r" detailed="false" pad.b="4" pad.r="6"/>
 				<cell rows="2">
 					<ledmeter height.min="256" vexpand="true" angle="1">
-						<ledchannel id="cl_${i}l" min="-72 db" max="12 db" log="true" type="rms_peak" peak.visibility="true" value.color="(:cm_${i} ieq 0) ? 'left' : 'cycle_inactive'"/>
-						<ledchannel id="cl_${i}r" min="-72 db" max="12 db" log="true" type="rms_peak" peak.visibility="true" value.color="(:cm_${i} ieq 0) ? 'right' : 'cycle_inactive'"/>
+						<ledchannel id="cl_${i}l" 
+						            min="-72 db" 
+						            max="12 db" 
+						            log="true" 
+						            type="rms_peak" 
+						            peak.visibility="true" 
+						            value.color="!(:cm_${i} or ((${has_solo}) and !:cs_${i})) ? 'left' : 'cycle_inactive'"
+						            />
+						<ledchannel id="cl_${i}r" 
+									min="-72 db" 
+									max="12 db" 
+									log="true" 
+									type="rms_peak" 
+									peak.visibility="true" 
+									value.color="!(:cm_${i} or ((${has_solo}) and !:cs_${i})) ? 'right' : 'cycle_inactive'"
+						            />
 					</ledmeter>
 				</cell>
 				<!-- Column 3 -->
