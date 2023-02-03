@@ -205,7 +205,7 @@ namespace lsp
             "Mixer",
             B_UTILITIES,
             "", // TODO: provide ID of the video on YouTube
-            "" // TODO: write plugin description, should be the same to the english version in 'bundles.json'
+            "Performs mixing of multiple audio channels into one single channel"
         };
 
         const plugin_t mixer_x4_mono =

@@ -97,10 +97,6 @@ namespace lsp
 
                 uint8_t            *pData;              // Allocated data
 
-            protected:
-                static void         ramp_mul_k3(float *dst, float *src, float prev, float next, size_t count);
-                static void         ramp_fmadd_k3(float *dst, float *src, float prev, float next, size_t count);
-
             public:
                 explicit mixer(const meta::plugin_t *meta);
                 virtual ~mixer();
