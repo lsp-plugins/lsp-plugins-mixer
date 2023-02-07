@@ -552,42 +552,75 @@ namespace lsp
 
         void mixer::dump(dspu::IStateDumper *v) const
         {
-//            // It is very useful to dump plugin state for debug purposes
-//            v->write("nChannels", nChannels);
-//            v->begin_array("vChannels", vChannels, nChannels);
-//            for (size_t i=0; i<nChannels; ++i)
-//            {
-//                channel_t *c            = &vChannels[i];
-//
-//                v->begin_object(c, sizeof(channel_t));
-//                {
-//                    v->write_object("sLine", &c->sLine);
-//                    v->write_object("sBypass", &c->sBypass);
-//
-//                    v->write("nDelay", c->nDelay);
-//                    v->write("fDryGain", c->fDryGain);
-//                    v->write("fWetWain", c->fWetGain);
-//
-//                    v->write("pIn", c->pIn);
-//                    v->write("pOut", c->pOut);
-//                    v->write("pDelay", c->pDelay);
-//                    v->write("pDry", c->pDry);
-//                    v->write("pWet", c->pWet);
-//
-//                    v->write("pOutDelay", c->pOutDelay);
-//                    v->write("pInLevel", c->pInLevel);
-//                    v->write("pOutLevel", c->pOutLevel);
-//                }
-//                v->end_object();
-//            }
-//            v->end_array();
-//
-//            v->write("vBuffer", vBuffer);
-//
-//            v->write("pBypass", pBypass);
-//            v->write("pGainOut", pGainOut);
-//
-//            v->write("pData", pData);
+            v->begin_array("vPChannels", vPChannels, nPChannels);
+            for (size_t i=0; i<nPChannels; ++i)
+            {
+                primary_channel_t *p = &vPChannels[i];
+
+                v->write_object("sBypass", &p->sBypass);
+                v->write("vIn", p->vIn);
+                v->write("vOut", p->vOut);
+                v->write("fOldDry", p->fOldDry);
+                v->write("fDry", p->fDry);
+                v->write("fOldWet", p->fOldWet);
+                v->write("fWet", p->fWet);
+                v->writev("fOldGain", p->fOldGain, 2);
+                v->writev("fGain", p->fGain, 2);
+
+                v->write("pIn", p->pIn);
+                v->write("pOut", p->pOut);
+                v->write("pDry", p->pDry);
+                v->write("pWet", p->pWet);
+                v->write("pOutGain", p->pOutGain);
+                v->write("pInLevel", p->pInLevel);
+                v->write("pOutLevel", p->pOutLevel);
+            }
+            v->end_array();
+
+            v->begin_array("vMChannels", vMChannels, nMChannels);
+            for (size_t i=0; i<nMChannels; ++i)
+            {
+                mix_channel_t *c = &vMChannels[i];
+
+                v->write("vIn", c->vIn);
+                v->writev("fOldGain", c->fOldGain, 2);
+                v->writev("fGain", c->fGain, 2);
+                v->write("fOldPostGain", c->fOldPostGain);
+                v->write("fPostGain", c->fPostGain);
+                v->write("bSolo", c->bSolo);
+
+                v->write("pIn", c->pIn);
+                v->write("pSolo", c->pSolo);
+                v->write("pMute", c->pMute);
+                v->write("pPhase", c->pPhase);
+                v->write("pPan", c->pPan);
+                v->write("pBalance", c->pBalance);
+                v->write("pOutGain", c->pOutGain);
+                v->write("pOutLevel", c->pOutLevel);
+            }
+            v->end_array();
+
+            v->write("nPChannels", nPChannels);
+            v->write("nMChannels", nMChannels);
+            v->write("bMonoOut", bMonoOut);
+            v->begin_array("vWet", vWet, 2);
+            {
+                v->write(vWet[0]);
+                v->write(vWet[1]);
+            }
+            v->end_array();
+            v->begin_array("vTemp", vTemp, 2);
+            {
+                v->write(vTemp[0]);
+                v->write(vTemp[1]);
+            }
+            v->end_array();
+
+            v->write("pBypass", pBypass);
+            v->write("pMonoOut", pMonoOut);
+            v->write("pBalance", pBalance);
+
+            v->write("pData", pData);
         }
 
     } /* namespace plugins */
