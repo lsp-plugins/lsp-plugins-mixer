@@ -208,6 +208,125 @@ namespace lsp
             "Performs mixing of multiple audio channels into one single channel"
         };
 
+        #define MIXER_GROUP_PORTS(i) \
+            MONO_PORT_GROUP_PORT(mixer_pg_mono_ ## i, "in_" #i); \
+            STEREO_PORT_GROUP_PORTS(mixer_pg_stereo_ ## i, "in_" #i "l", "in_" #i "r"); \
+
+        #define MIXER_MONO_GROUP(i) \
+            { "mix_in" #i, "Mixer input " #i,        GRP_MONO,       PGF_IN,    mixer_pg_mono_ ## i ##_ports        }
+
+        #define MIXER_STEREO_GROUP(i) \
+            { "mix_in" #i, "Mixer input " #i,        GRP_STEREO,     PGF_IN,    mixer_pg_stereo_ ## i ##_ports      }
+
+        MIXER_GROUP_PORTS(1);
+        MIXER_GROUP_PORTS(2);
+        MIXER_GROUP_PORTS(3);
+        MIXER_GROUP_PORTS(4);
+        MIXER_GROUP_PORTS(5);
+        MIXER_GROUP_PORTS(6);
+        MIXER_GROUP_PORTS(7);
+        MIXER_GROUP_PORTS(8);
+        MIXER_GROUP_PORTS(9);
+        MIXER_GROUP_PORTS(10);
+        MIXER_GROUP_PORTS(11);
+        MIXER_GROUP_PORTS(12);
+        MIXER_GROUP_PORTS(13);
+        MIXER_GROUP_PORTS(14);
+        MIXER_GROUP_PORTS(15);
+        MIXER_GROUP_PORTS(16);
+
+        static const port_group_t mixer_x4_mono_port_groups[] =
+        {
+            MAIN_MONO_PORT_GROUPS,
+            MIXER_MONO_GROUP(1),
+            MIXER_MONO_GROUP(2),
+            MIXER_MONO_GROUP(3),
+            MIXER_MONO_GROUP(4),
+            PORT_GROUPS_END
+        };
+
+        static const port_group_t mixer_x8_mono_port_groups[] =
+        {
+            MAIN_MONO_PORT_GROUPS,
+            MIXER_MONO_GROUP(1),
+            MIXER_MONO_GROUP(2),
+            MIXER_MONO_GROUP(3),
+            MIXER_MONO_GROUP(4),
+            MIXER_MONO_GROUP(5),
+            MIXER_MONO_GROUP(6),
+            MIXER_MONO_GROUP(7),
+            MIXER_MONO_GROUP(8),
+            PORT_GROUPS_END
+        };
+
+        static const port_group_t mixer_x16_mono_port_groups[] =
+        {
+            MAIN_MONO_PORT_GROUPS,
+            MIXER_MONO_GROUP(1),
+            MIXER_MONO_GROUP(2),
+            MIXER_MONO_GROUP(3),
+            MIXER_MONO_GROUP(4),
+            MIXER_MONO_GROUP(5),
+            MIXER_MONO_GROUP(6),
+            MIXER_MONO_GROUP(7),
+            MIXER_MONO_GROUP(8),
+            MIXER_MONO_GROUP(9),
+            MIXER_MONO_GROUP(10),
+            MIXER_MONO_GROUP(11),
+            MIXER_MONO_GROUP(12),
+            MIXER_MONO_GROUP(13),
+            MIXER_MONO_GROUP(14),
+            MIXER_MONO_GROUP(15),
+            MIXER_MONO_GROUP(16),
+            PORT_GROUPS_END
+        };
+
+        static const port_group_t mixer_x4_stereo_port_groups[] =
+        {
+            MAIN_STEREO_PORT_GROUPS,
+            MIXER_STEREO_GROUP(1),
+            MIXER_STEREO_GROUP(2),
+            MIXER_STEREO_GROUP(3),
+            MIXER_STEREO_GROUP(4),
+            PORT_GROUPS_END
+        };
+
+        static const port_group_t mixer_x8_stereo_port_groups[] =
+        {
+            MAIN_STEREO_PORT_GROUPS,
+            MIXER_STEREO_GROUP(1),
+            MIXER_STEREO_GROUP(2),
+            MIXER_STEREO_GROUP(3),
+            MIXER_STEREO_GROUP(4),
+            MIXER_STEREO_GROUP(5),
+            MIXER_STEREO_GROUP(6),
+            MIXER_STEREO_GROUP(7),
+            MIXER_STEREO_GROUP(8),
+            PORT_GROUPS_END
+        };
+
+        static const port_group_t mixer_x16_stereo_port_groups[] =
+        {
+            MAIN_STEREO_PORT_GROUPS,
+            MIXER_STEREO_GROUP(1),
+            MIXER_STEREO_GROUP(2),
+            MIXER_STEREO_GROUP(3),
+            MIXER_STEREO_GROUP(4),
+            MIXER_STEREO_GROUP(5),
+            MIXER_STEREO_GROUP(6),
+            MIXER_STEREO_GROUP(7),
+            MIXER_STEREO_GROUP(8),
+            MIXER_STEREO_GROUP(9),
+            MIXER_STEREO_GROUP(10),
+            MIXER_STEREO_GROUP(11),
+            MIXER_STEREO_GROUP(12),
+            MIXER_STEREO_GROUP(13),
+            MIXER_STEREO_GROUP(14),
+            MIXER_STEREO_GROUP(15),
+            MIXER_STEREO_GROUP(16),
+            PORT_GROUPS_END
+        };
+
         const plugin_t mixer_x4_mono =
         {
             "Mischer x4 Mono",
@@ -228,7 +347,7 @@ namespace lsp
             mixer_x4_mono_ports,
             "util/mixer/mono.xml",
             NULL,
-            mono_plugin_port_groups,
+            mixer_x4_mono_port_groups,
             &mixer_bundle
         };
 
@@ -252,7 +371,7 @@ namespace lsp
             mixer_x8_mono_ports,
             "util/mixer/mono.xml",
             NULL,
-            mono_plugin_port_groups,
+            mixer_x8_mono_port_groups,
             &mixer_bundle
         };
 
@@ -276,7 +395,7 @@ namespace lsp
             mixer_x16_mono_ports,
             "util/mixer/mono.xml",
             NULL,
-            mono_plugin_port_groups,
+            mixer_x16_mono_port_groups,
             &mixer_bundle
         };
 
@@ -300,7 +419,7 @@ namespace lsp
             mixer_x4_stereo_ports,
             "util/mixer/stereo.xml",
             NULL,
-            mono_plugin_port_groups,
+            mixer_x4_stereo_port_groups,
             &mixer_bundle
         };
 
@@ -324,7 +443,7 @@ namespace lsp
             mixer_x8_stereo_ports,
             "util/mixer/stereo.xml",
             NULL,
-            mono_plugin_port_groups,
+            mixer_x8_stereo_port_groups,
             &mixer_bundle
         };
 
@@ -348,7 +467,7 @@ namespace lsp
             mixer_x16_stereo_ports,
             "util/mixer/stereo.xml",
             NULL,
-            mono_plugin_port_groups,
+            mixer_x16_stereo_port_groups,
             &mixer_bundle
         };
 
