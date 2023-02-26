@@ -196,8 +196,8 @@ namespace lsp
         };
 
         static const int plugin_classes[]       = { C_MIXER, -1 };
-        static const int clap_features_mono[]   = { CF_AUDIO_EFFECT, CF_UTILITY, CF_MIXING, -1 };
-        static const int clap_features_stereo[] = { CF_AUDIO_EFFECT, CF_UTILITY, CF_MIXING, -1 };
+        static const int clap_features_mono[]   = { CF_AUDIO_EFFECT, CF_MIXING, CF_MONO, -1 };
+        static const int clap_features_stereo[] = { CF_AUDIO_EFFECT, CF_MIXING, CF_STEREO, -1 };
 
         const meta::bundle_t mixer_bundle =
         {
