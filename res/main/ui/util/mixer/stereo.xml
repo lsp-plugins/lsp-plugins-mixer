@@ -17,16 +17,13 @@
 				<hsep/>
 			</cell>
 
-			<ui:with
-				bright="(:cm_${i} or ((${has_solo}) and !:cs_${i})) ? 0.75 : 1.0"
-				bg.bright="(:cm_${i} or ((${has_solo}) and !:cs_${i})) ? :const_bg_darken : 1.0">
-				
-				<cell cols="2" pad.v="4">
-					<label text="labels.chan.num_id" text:id="${i}"/>
-				</cell>
-				<cell cols="2" bg.color="bg" pad.v="2" vreduce="true" vexpand="false">
-					<hsep/>
-				</cell>
+			<cell cols="2" pad.v="4">
+				<label text="labels.chan.num_id" text:id="${i}" bright="(:cm_${i} or ((${has_solo}) and !:cs_${i})) ? 0.75 : 1.0" bg.bright="(:cm_${i} or ((${has_solo}) and !:cs_${i})) ? :const_bg_darken : 1.0"/>
+			</cell>
+			<cell cols="2" bg.color="bg" pad.v="2" vreduce="true" vexpand="false">
+				<hsep/>
+			</cell>
+			<ui:with bright="(:cm_${i} or ((${has_solo}) and !:cs_${i})) ? 0.75 : 1.0" bg.bright="(:cm_${i} or ((${has_solo}) and !:cs_${i})) ? :const_bg_darken : 1.0">
 				<cell cols="2" pad.v="4" pad.h="6">
 					<hbox>
 						<button id="cs_${i}" text="labels.chan.S_olo" ui:inject="Button_green_8" font.size="8" pad.r="6" hfill="true" expand="false"/>
@@ -34,64 +31,72 @@
 						<button id="ci_${i}" text="labels.chan.P_hase" ui:inject="Button_yellow_8" font.size="8" hfill="true" expand="false"/>
 					</hbox>
 				</cell>
-				<cell cols="2" bg.color="bg" pad.v="2" vreduce="true" vexpand="false">
-					<hsep/>
-				</cell>
-				<cell cols="2" pad.t="4">
+			</ui:with>
+			<cell cols="2" bg.color="bg" pad.v="2" vreduce="true" vexpand="false">
+				<hsep/>
+			</cell>
+			<ui:with bright="(:cm_${i} or ((${has_solo}) and !:cs_${i})) ? 0.75 : 1.0" bg.bright="(:cm_${i} or ((${has_solo}) and !:cs_${i})) ? :const_bg_darken : 1.0">
+				<cell cols="2">
 					<label text="labels.signal.pan"/>
 				</cell>
-				
+
 				<knob id="cp_${i}l" size="16" scolor="!(:cm_${i} or ((${has_solo}) and !:cs_${i})) ? 'left' : 'cycle_inactive'" pad.h="6"/>
-				<value id="cp_${i}l" detailed="false" pad.b="4" pad.r="6"/>
-				<cell cols="2" bg.color="bg" pad.v="2" vreduce="true" vexpand="false">
-					<hsep/>
-				</cell>
+				<value id="cp_${i}l" detailed="false" pad.v="4" pad.r="6"/>
+			</ui:with>
+			<cell cols="2" bg.color="bg" pad.v="2" vreduce="true" vexpand="false">
+				<hsep/>
+			</cell>
+			<ui:with bright="(:cm_${i} or ((${has_solo}) and !:cs_${i})) ? 0.75 : 1.0" bg.bright="(:cm_${i} or ((${has_solo}) and !:cs_${i})) ? :const_bg_darken : 1.0">
 				<cell cols="2" pad.v="4">
 					<label text="labels.balance"/>
 				</cell>
 				<cell cols="2" pad.h="6">
-					<fader id="cb_${i}" 
-						   ui:inject="Fader_balance" 
-						   bcolor="!(:cm_${i} or ((${has_solo}) and !:cs_${i})) ? 'balance' : 'cycle_inactive'" 
-						   scolor="!(:cm_${i} or ((${has_solo}) and !:cs_${i})) ? 'balance' : 'cycle_inactive'"/>
+					<fader id="cb_${i}" ui:inject="Fader_balance" bcolor="!(:cm_${i} or ((${has_solo}) and !:cs_${i})) ? 'balance' : 'cycle_inactive'" scolor="!(:cm_${i} or ((${has_solo}) and !:cs_${i})) ? 'balance' : 'cycle_inactive'"/>
 				</cell>
 				<cell cols="2" pad.v="4">
 					<value id="cb_${i}" same.line="true"/>
 				</cell>
-				<cell cols="2" bg.color="bg" pad.v="2" vreduce="true" vexpand="false">
-					<hsep/>
-				</cell>
+			</ui:with>
+			<cell cols="2" bg.color="bg" pad.v="2" vreduce="true" vexpand="false">
+				<hsep/>
+			</cell>
+			<ui:with bright="(:cm_${i} or ((${has_solo}) and !:cs_${i})) ? 0.75 : 1.0" bg.bright="(:cm_${i} or ((${has_solo}) and !:cs_${i})) ? :const_bg_darken : 1.0">
 				<fader id="cg_${i}" vexpand="true" angle="1" pad.t="4" scolor="!(:cm_${i} or ((${has_solo}) and !:cs_${i})) ? 'fader' : 'cycle_inactive'"/>
 				<value id="cg_${i}" vreduce="true" width.min="48" pad.b="4"/>
-	
+
 				<!-- Column 2 -->
 				<knob id="cp_${i}r" size="16" scolor="!(:cm_${i} or ((${has_solo}) and !:cs_${i})) ? 'right' : 'cycle_inactive'" pad.r="6"/>
-				<value id="cp_${i}r" detailed="false" pad.b="4" pad.r="6"/>
+				<value id="cp_${i}r" detailed="false" pad.v="4" pad.r="6"/>
 				<cell rows="2">
 					<ledmeter height.min="256" vexpand="true" angle="1">
-						<ledchannel id="cl_${i}l" 
-						            min="-72 db" 
-						            max="12 db" 
-						            log="true" 
-						            type="rms_peak" 
-						            peak.visibility="true" 
-						            value.color="!(:cm_${i} or ((${has_solo}) and !:cs_${i})) ? 'left' : 'cycle_inactive'"
-						            />
-						<ledchannel id="cl_${i}r" 
-									min="-72 db" 
-									max="12 db" 
-									log="true" 
-									type="rms_peak" 
-									peak.visibility="true" 
-									value.color="!(:cm_${i} or ((${has_solo}) and !:cs_${i})) ? 'right' : 'cycle_inactive'"
-						            />
+						<ledchannel
+							id="cl_${i}l"
+							min="-72 db"
+							max="12 db"
+							log="true"
+							type="rms_peak"
+							peak.visibility="true"
+							value.color="!(:cm_${i} or ((${has_solo}) and !:cs_${i})) ? 'left' : 'cycle_inactive'"
+							yellow.color="!(:cm_${i} or ((${has_solo}) and !:cs_${i})) ? 'meter_yellow' : 'cycle_inactive'"
+							red.color="!(:cm_${i} or ((${has_solo}) and !:cs_${i})) ? 'meter_red' : 'cycle_inactive'"/>
+						<ledchannel
+							id="cl_${i}r"
+							min="-72 db"
+							max="12 db"
+							log="true"
+							type="rms_peak"
+							peak.visibility="true"
+							value.color="!(:cm_${i} or ((${has_solo}) and !:cs_${i})) ? 'right' : 'cycle_inactive'"
+							yellow.color="!(:cm_${i} or ((${has_solo}) and !:cs_${i})) ? 'meter_yellow' : 'cycle_inactive'"
+							red.color="!(:cm_${i} or ((${has_solo}) and !:cs_${i})) ? 'meter_red' : 'cycle_inactive'"/>
 					</ledmeter>
 				</cell>
-				<!-- Column 3 -->
-				<cell rows="14" bg.color="bg" pad.h="2" hreduce="true" hexpand="false">
-					<vsep/>
-				</cell>
 			</ui:with>
+			<!-- Column 3 -->
+			<cell rows="14" bg.color="bg" pad.h="2" hreduce="true" hexpand="false">
+				<vsep/>
+			</cell>
+
 		</ui:for>
 
 		<!-- Master section -->
@@ -109,9 +114,9 @@
 			<hsep/>
 		</cell>
 
-		<label text="labels.signal.dry" pad.v="4" pad.l="6"/>
-		<knob id="dry" size="20" scolor="dry" pad.l="6"/>
-		<value id="dry" sline="true" pad.l="6" width.min="48" pad.b="4"/>
+		<label text="labels.signal.dry" pad.v="4" pad.h="6"/>
+		<knob id="dry" size="20" scolor="dry" pad.h="6"/>
+		<value id="dry" sline="true" pad.l="6" width.min="48" pad.v="4" pad.r="6"/>
 		<cell cols="2" bg.color="bg" pad.v="2" vreduce="true" vexpand="false">
 			<hsep/>
 		</cell>
@@ -129,7 +134,7 @@
 					<vbox>
 						<label text="labels.balance" pad.v="4" pad.h="6"/>
 						<knob id="bal" size="20" scolor="balance"/>
-						<value id="bal" same.line="true" pad.b="4"/>
+						<value id="bal" same.line="true" pad.v="4"/>
 						<hsep bg.color="bg" pad.v="2" vreduce="true" vexpand="false"/>
 						<fader id="g_out" vexpand="true" angle="1" pad.t="4"/>
 						<value id="g_out" vreduce="true" width.min="32" pad.b="4"/>
@@ -149,7 +154,7 @@
 		<!-- Column 3 -->
 		<label text="labels.signal.wet" pad.v="4" pad.r="6"/>
 		<knob id="wet" size="20" scolor="wet" pad.r="6"/>
-		<value id="wet" sline="true" pad.r="6" width.min="48" pad.b="4"/>
+		<value id="wet" sline="true" pad.r="6" width.min="48" pad.v="4"/>
 
 	</grid>
 </plugin>

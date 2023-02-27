@@ -17,15 +17,13 @@
 				<hsep/>
 			</cell>
 
-			<ui:with
-				bright="(:cm_${i} or ((${has_solo}) and !:cs_${i})) ? 0.75 : 1.0"
-				bg.bright="(:cm_${i} or ((${has_solo}) and !:cs_${i})) ? :const_bg_darken : 1.0">
-				<cell pad.v="4">
-					<label text="labels.chan.num_id" text:id="${i}"/>
-				</cell>
-				<cell bg.color="bg" pad.v="2" vreduce="true" vexpand="false">
-					<hsep/>
-				</cell>
+			<cell pad.v="4">
+				<label text="labels.chan.num_id" text:id="${i}" bright="(:cm_${i} or ((${has_solo}) and !:cs_${i})) ? 0.75 : 1.0" bg.bright="(:cm_${i} or ((${has_solo}) and !:cs_${i})) ? :const_bg_darken : 1.0"/>
+			</cell>
+			<cell bg.color="bg" pad.v="2" vreduce="true" vexpand="false">
+				<hsep/>
+			</cell>
+			<ui:with bright="(:cm_${i} or ((${has_solo}) and !:cs_${i})) ? 0.75 : 1.0" bg.bright="(:cm_${i} or ((${has_solo}) and !:cs_${i})) ? :const_bg_darken : 1.0">
 				<cell pad.v="4" pad.h="6">
 					<hbox>
 						<button id="cs_${i}" text="labels.chan.S_olo" ui:inject="Button_green_8" font.size="8" pad.r="6" hfill="true" expand="false"/>
@@ -33,10 +31,11 @@
 						<button id="ci_${i}" text="labels.chan.P_hase" ui:inject="Button_yellow_8" font.size="8" hfill="true" expand="false"/>
 					</hbox>
 				</cell>
-				<cell bg.color="bg" pad.v="2" vreduce="true" vexpand="false">
-					<hsep/>
-				</cell>
-
+			</ui:with>
+			<cell bg.color="bg" pad.v="2" vreduce="true" vexpand="false">
+				<hsep/>
+			</cell>
+			<ui:with bright="(:cm_${i} or ((${has_solo}) and !:cs_${i})) ? 0.75 : 1.0" bg.bright="(:cm_${i} or ((${has_solo}) and !:cs_${i})) ? :const_bg_darken : 1.0">
 				<hbox vexpand="true">
 					<vbox >
 						<fader id="cg_${i}" vexpand="true" angle="1" pad.t="4" scolor="!(:cm_${i} or ((${has_solo}) and !:cs_${i})) ? 'fader' : 'cycle_inactive'"/>
@@ -44,26 +43,30 @@
 					</vbox>
 
 					<ledmeter height.min="256" vexpand="true" angle="1">
-						<ledchannel id="cl_${i}"
-							min="-72 db" max="12 db" log="true"
-							type="rms_peak" peak.visibility="true"
+						<ledchannel
+							id="cl_${i}"
+							min="-72 db"
+							max="12 db"
+							log="true"
+							type="rms_peak"
+							peak.visibility="true"
 							value.color="!(:cm_${i} or ((${has_solo}) and !:cs_${i})) ? 'mono' : 'cycle_inactive'"
 							yellow.color="!(:cm_${i} or ((${has_solo}) and !:cs_${i})) ? 'meter_yellow' : 'cycle_inactive'"
-							red.color="!(:cm_${i} or ((${has_solo}) and !:cs_${i})) ? 'meter_red' : 'cycle_inactive'"
-							/>
+							red.color="!(:cm_${i} or ((${has_solo}) and !:cs_${i})) ? 'meter_red' : 'cycle_inactive'"/>
 					</ledmeter>
 				</hbox>
-				<!-- Column 3 -->
-				<cell rows="7" bg.color="bg" pad.h="2" hreduce="true" hexpand="false">
-					<vsep/>
-				</cell>
 			</ui:with>
+			<!-- Column 3 -->
+			<cell rows="7" bg.color="bg" pad.h="2" hreduce="true" hexpand="false">
+				<vsep/>
+			</cell>
+
 		</ui:for>
 
 		<!-- Master section -->
 		<!-- Column 1 -->
 		<cell cols="2" rows="3">
-			<label text="labels.chan.output" />
+			<label text="labels.chan.output"/>
 		</cell>
 		<cell cols="2" bg.color="bg" pad.v="2" vreduce="true" vexpand="false">
 			<hsep/>
@@ -75,12 +78,12 @@
 				<grid rows="2" cols="5">
 					<cell cols="5">
 						<grid rows="4" cols="2">
-							<label text="labels.signal.dry" pad.v="4" pad.l="6"/>
+							<label text="labels.signal.dry" pad.v="4" pad.h="6"/>
 							<label text="labels.signal.wet" pad.v="4" pad.r="6"/>
-							<knob id="dry" size="20" scolor="dry" pad.l="6"/>
+							<knob id="dry" size="20" scolor="dry" pad.h="6"/>
 							<knob id="wet" size="20" scolor="wet" pad.r="6"/>
-							<value id="dry" sline="true" pad.l="6" width.min="48" pad.b="4"/>
-							<value id="wet" sline="true" pad.r="6" width.min="48" pad.b="4"/>
+							<value id="dry" sline="true" pad.l="6" width.min="48" pad.v="4" pad.r="6"/>
+							<value id="wet" sline="true" pad.r="6" width.min="48" pad.v="4"/>
 
 							<cell cols="2" bg.color="bg" pad.v="2" vreduce="true" vexpand="false">
 								<hsep/>
@@ -90,10 +93,7 @@
 					<vbox vexpand="true" bg.color="bg_schema">
 						<label text="labels.chan.in" pad.b="3" pad.t="3"/>
 						<ledmeter height.min="256" vexpand="true" angle="1">
-							<ledchannel id="ilm"
-								min="-72 db" max="12 db" log="true"
-								type="rms_peak" peak.visibility="true"
-								value.color="mono" />
+							<ledchannel id="ilm" min="-72 db" max="12 db" log="true" type="rms_peak" peak.visibility="true" value.color="mono"/>
 						</ledmeter>
 					</vbox>
 					<vsep bg.color="bg" pad.h="2" hreduce="true" hexpand="false"/>
@@ -105,10 +105,7 @@
 					<vbox vexpand="true" bg.color="bg_schema">
 						<label text="labels.chan.out" pad.b="3" pad.t="3"/>
 						<ledmeter height.min="256" vexpand="true" angle="1">
-							<ledchannel id="olm"
-								min="-72 db" max="12 db" log="true"
-								type="rms_peak" peak.visibility="true"
-								value.color="mono" />
+							<ledchannel id="olm" min="-72 db" max="12 db" log="true" type="rms_peak" peak.visibility="true" value.color="mono"/>
 						</ledmeter>
 					</vbox>
 				</grid>
