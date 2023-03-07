@@ -51,7 +51,7 @@
 					<label text="labels.balance"/>
 				</cell>
 				<cell cols="2" pad.h="6">
-					<fader id="cb_${i}" ui:inject="Fader_balance" bcolor="!(:cm_${i} or ((${has_solo}) and !:cs_${i})) ? 'balance' : 'cycle_inactive'" scolor="!(:cm_${i} or ((${has_solo}) and !:cs_${i})) ? 'balance' : 'cycle_inactive'"/>
+					<fader id="cb_${i}" ui:inject="Fader_balance" bcolor="!(:cm_${i} or ((${has_solo}) and !:cs_${i})) ? 'fader_balance' : 'fader_inactive'" scolor="!(:cm_${i} or ((${has_solo}) and !:cs_${i})) ? 'fader_balance' : 'fader_inactive'"/>
 				</cell>
 				<cell cols="2" pad.v="4">
 					<value id="cb_${i}" same.line="true"/>
@@ -61,14 +61,14 @@
 				<hsep/>
 			</cell>
 			<ui:with bright="(:cm_${i} or ((${has_solo}) and !:cs_${i})) ? 0.75 : 1.0" bg.bright="(:cm_${i} or ((${has_solo}) and !:cs_${i})) ? :const_bg_darken : 1.0">
-				<fader id="cg_${i}" vexpand="true" angle="1" pad.t="4" scolor="!(:cm_${i} or ((${has_solo}) and !:cs_${i})) ? 'fader' : 'cycle_inactive'"/>
+				<fader id="cg_${i}" vexpand="true" angle="1" pad.t="4" scolor="!(:cm_${i} or ((${has_solo}) and !:cs_${i})) ? 'fader' : 'fader_inactive'" />
 				<value id="cg_${i}" vreduce="true" width.min="48" pad.b="4"/>
 
 				<!-- Column 2 -->
 				<knob id="cp_${i}r" size="16" scolor="!(:cm_${i} or ((${has_solo}) and !:cs_${i})) ? 'right' : 'cycle_inactive'" pad.r="6"/>
 				<value id="cp_${i}r" detailed="false" pad.v="4" pad.r="6"/>
 				<cell rows="2">
-					<ledmeter height.min="256" vexpand="true" angle="1">
+					<ledmeter height.min="256" vexpand="true" angle="1" >
 						<ledchannel
 							id="cl_${i}l"
 							min="-72 db"
