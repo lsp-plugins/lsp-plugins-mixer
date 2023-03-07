@@ -41,21 +41,21 @@
 						<fader id="cg_${i}" vexpand="true" angle="1" pad.t="4" scolor="!(:cm_${i} or ((${has_solo}) and !:cs_${i})) ? 'fader' : 'fader_inactive'"/>
 						<value id="cg_${i}" vreduce="true" width.min="48" pad.b="4"/>
 					</vbox>
+				</ui:with>
+				<ledmeter height.min="256" vexpand="true" angle="1" bright="(:cm_${i} or ((${has_solo}) and !:cs_${i})) ? :const_led_darken : 1.0">
+					<ledchannel
+						id="cl_${i}"
+						min="-72 db"
+						max="12 db"
+						log="true"
+						type="rms_peak"
+						peak.visibility="true"
+						value.color="!(:cm_${i} or ((${has_solo}) and !:cs_${i})) ? 'mono' : 'cycle_inactive'"
+						yellow.color="!(:cm_${i} or ((${has_solo}) and !:cs_${i})) ? 'meter_yellow' : 'cycle_inactive'"
+						red.color="!(:cm_${i} or ((${has_solo}) and !:cs_${i})) ? 'meter_red' : 'cycle_inactive'"/>
+				</ledmeter>
+			</hbox>
 
-					<ledmeter height.min="256" vexpand="true" angle="1">
-						<ledchannel
-							id="cl_${i}"
-							min="-72 db"
-							max="12 db"
-							log="true"
-							type="rms_peak"
-							peak.visibility="true"
-							value.color="!(:cm_${i} or ((${has_solo}) and !:cs_${i})) ? 'mono' : 'cycle_inactive'"
-							yellow.color="!(:cm_${i} or ((${has_solo}) and !:cs_${i})) ? 'meter_yellow' : 'cycle_inactive'"
-							red.color="!(:cm_${i} or ((${has_solo}) and !:cs_${i})) ? 'meter_red' : 'cycle_inactive'"/>
-					</ledmeter>
-				</hbox>
-			</ui:with>
 			<!-- Column 3 -->
 			<cell rows="7" bg.color="bg" pad.h="2" hreduce="true" hexpand="false">
 				<vsep/>

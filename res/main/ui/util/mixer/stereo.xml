@@ -61,14 +61,15 @@
 				<hsep/>
 			</cell>
 			<ui:with bright="(:cm_${i} or ((${has_solo}) and !:cs_${i})) ? 0.75 : 1.0" bg.bright="(:cm_${i} or ((${has_solo}) and !:cs_${i})) ? :const_bg_darken : 1.0">
-				<fader id="cg_${i}" vexpand="true" angle="1" pad.t="4" scolor="!(:cm_${i} or ((${has_solo}) and !:cs_${i})) ? 'fader' : 'fader_inactive'" />
+				<fader id="cg_${i}" vexpand="true" angle="1" pad.t="4" scolor="!(:cm_${i} or ((${has_solo}) and !:cs_${i})) ? 'fader' : 'fader_inactive'" button.width="20"/>
 				<value id="cg_${i}" vreduce="true" width.min="48" pad.b="4"/>
 
 				<!-- Column 2 -->
 				<knob id="cp_${i}r" size="16" scolor="!(:cm_${i} or ((${has_solo}) and !:cs_${i})) ? 'right' : 'cycle_inactive'" pad.r="6"/>
 				<value id="cp_${i}r" detailed="false" pad.v="4" pad.r="6"/>
+				</ui:with>
 				<cell rows="2">
-					<ledmeter height.min="256" vexpand="true" angle="1" >
+					<ledmeter height.min="256" vexpand="true" angle="1" bright="(:cm_${i} or ((${has_solo}) and !:cs_${i})) ? :const_led_darken : 1.0">
 						<ledchannel
 							id="cl_${i}l"
 							min="-72 db"
@@ -91,7 +92,6 @@
 							red.color="!(:cm_${i} or ((${has_solo}) and !:cs_${i})) ? 'meter_red' : 'cycle_inactive'"/>
 					</ledmeter>
 				</cell>
-			</ui:with>
 			<!-- Column 3 -->
 			<cell rows="14" bg.color="bg" pad.h="2" hreduce="true" hexpand="false">
 				<vsep/>
