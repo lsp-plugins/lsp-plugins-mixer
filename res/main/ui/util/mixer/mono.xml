@@ -6,25 +6,25 @@
 	    ((ex :cs_16) ? :cs_9 or :cs_10 or :cs_11 or :cs_12 or :cs_13 or :cs_14 or :cs_15 or :cs_16 : false)
 	"/>
 
-	<grid rows="7" cols="${2 * :channels + 2}" transpose="true" bg.color="bg_schema">
+	<grid rows="7" cols="${3 * :channels + 2}" transpose="true" bg.color="bg_schema">
 		<!-- Input channels -->
 		<ui:for id="i" first="1" count=":channels">
 			<!-- Column 1 -->
-			<cell cols="2" pad.v="4">
+			<cell cols="3" pad.v="4">
 				<label/>
+			</cell>
+			<cell cols="3" bg.color="bg" pad.v="2" vreduce="true" vexpand="false">
+				<hsep/>
+			</cell>
+
+			<cell cols="2" pad.v="4">
+				<label text="labels.chan.num_id" text:id="${i}" bright="(:cm_${i} or ((${has_solo}) and !:cs_${i})) ? 0.75 : 1.0" bg.bright="(:cm_${i} or ((${has_solo}) and !:cs_${i})) ? :const_bg_darken : 1.0"/>
 			</cell>
 			<cell cols="2" bg.color="bg" pad.v="2" vreduce="true" vexpand="false">
 				<hsep/>
 			</cell>
-
-			<cell pad.v="4">
-				<label text="labels.chan.num_id" text:id="${i}" bright="(:cm_${i} or ((${has_solo}) and !:cs_${i})) ? 0.75 : 1.0" bg.bright="(:cm_${i} or ((${has_solo}) and !:cs_${i})) ? :const_bg_darken : 1.0"/>
-			</cell>
-			<cell bg.color="bg" pad.v="2" vreduce="true" vexpand="false">
-				<hsep/>
-			</cell>
 			<ui:with bright="(:cm_${i} or ((${has_solo}) and !:cs_${i})) ? 0.75 : 1.0" bg.bright="(:cm_${i} or ((${has_solo}) and !:cs_${i})) ? :const_bg_darken : 1.0">
-				<cell pad.v="4" pad.h="6">
+				<cell cols="2" pad.v="4" pad.h="6">
 					<hbox>
 						<button id="cs_${i}" text="labels.chan.S_olo" ui:inject="Button_green_8" font.size="8" pad.r="6" hfill="true" expand="false"/>
 						<button id="cm_${i}" text="labels.chan.M_ute" ui:inject="Button_red_8" font.size="8" pad.r="6" hfill="true" expand="false"/>
@@ -32,16 +32,14 @@
 					</hbox>
 				</cell>
 			</ui:with>
-			<cell bg.color="bg" pad.v="2" vreduce="true" vexpand="false">
+			<cell cols="2" bg.color="bg" pad.v="2" vreduce="true" vexpand="false">
 				<hsep/>
 			</cell>
 			<ui:with bright="(:cm_${i} or ((${has_solo}) and !:cs_${i})) ? 0.75 : 1.0" bg.bright="(:cm_${i} or ((${has_solo}) and !:cs_${i})) ? :const_bg_darken : 1.0">
-				<hbox vexpand="true">
-					<vbox >
-						<fader id="cg_${i}" vexpand="true" angle="1" pad.t="4" scolor="!(:cm_${i} or ((${has_solo}) and !:cs_${i})) ? 'fader' : 'fader_inactive'"/>
-						<value id="cg_${i}" vreduce="true" width.min="48" pad.b="4"/>
-					</vbox>
-				</hbox>
+				<vbox vexpand="true">
+					<fader id="cg_${i}" vexpand="true" angle="1" pad.t="4" scolor="!(:cm_${i} or ((${has_solo}) and !:cs_${i})) ? 'fader' : 'fader_inactive'"/>
+					<value id="cg_${i}" vreduce="true" width.min="48" pad.b="4"/>
+				</vbox>
 			</ui:with>
 			<ledmeter height.min="256" vexpand="true" angle="1" bright="(:cm_${i} or ((${has_solo}) and !:cs_${i})) ? :const_led_darken : 1.0">
 				<ledchannel
