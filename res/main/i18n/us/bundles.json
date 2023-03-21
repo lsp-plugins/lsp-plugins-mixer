@@ -1,0 +1,7 @@
+{
+	"mixer": {
+		"name": "Mixer",
+		"description": "Performs mixing of multiple audio channels into one single channel"
+	}
+}
+
