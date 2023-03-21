@@ -204,7 +204,7 @@ namespace lsp
             "mixer",
             "Mixer",
             B_UTILITIES,
-            "", // TODO: provide ID of the video on YouTube
+            "EFf4VqvMUXM",
             "Performs mixing of multiple audio channels into one single channel"
         };
 
