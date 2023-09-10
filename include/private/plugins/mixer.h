@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-plugins-mixer
  * Created on: 25 нояб. 2020 г.
@@ -97,18 +97,21 @@ namespace lsp
 
                 uint8_t            *pData;              // Allocated data
 
+            protected:
+                void                do_destroy();
+
             public:
                 explicit mixer(const meta::plugin_t *meta);
-                virtual ~mixer();
+                virtual ~mixer() override;
 
-                virtual void        init(plug::IWrapper *wrapper, plug::IPort **ports);
-                void                destroy();
+                virtual void        init(plug::IWrapper *wrapper, plug::IPort **ports) override;
+                void                destroy() override;
 
             public:
-                virtual void        update_sample_rate(long sr);
-                virtual void        update_settings();
-                virtual void        process(size_t samples);
-                virtual void        dump(dspu::IStateDumper *v) const;
+                virtual void        update_sample_rate(long sr) override;
+                virtual void        update_settings() override;
+                virtual void        process(size_t samples) override;
+                virtual void        dump(dspu::IStateDumper *v) const override;
         };
     } /* namespace plugins */
 } /* namespace lsp */
