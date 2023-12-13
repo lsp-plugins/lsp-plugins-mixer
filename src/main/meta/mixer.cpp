@@ -331,6 +331,7 @@ namespace lsp
         {
             "Mischer x4 Mono",
             "Mixer x4 Mono",
+            "Mixer x4 Mono",
             "M4M",
             &developers::v_sadovnikov,
             "mixer_x4_mono",
@@ -354,6 +355,7 @@ namespace lsp
         const plugin_t mixer_x8_mono =
         {
             "Mischer x8 Mono",
+            "Mixer x8 Mono",
             "Mixer x8 Mono",
             "M8M",
             &developers::v_sadovnikov,
@@ -379,6 +381,7 @@ namespace lsp
         {
             "Mischer x16 Mono",
             "Mixer x16 Mono",
+            "Mixer x16 Mono",
             "M16M",
             &developers::v_sadovnikov,
             "mixer_x16_mono",
@@ -402,6 +405,7 @@ namespace lsp
         const plugin_t mixer_x4_stereo =
         {
             "Mischer x4 Stereo",
+            "Mixer x4 Stereo",
             "Mixer x4 Stereo",
             "M4S",
             &developers::v_sadovnikov,
@@ -427,6 +431,7 @@ namespace lsp
         {
             "Mischer x8 Stereo",
             "Mixer x8 Stereo",
+            "Mixer x8 Stereo",
             "M8S",
             &developers::v_sadovnikov,
             "mixer_x8_stereo",
@@ -450,6 +455,7 @@ namespace lsp
         const plugin_t mixer_x16_stereo =
         {
             "Mischer x16 Stereo",
+            "Mixer x16 Stereo",
             "Mixer x16 Stereo",
             "M16s",
             &developers::v_sadovnikov,
