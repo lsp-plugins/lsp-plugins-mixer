@@ -17,8 +17,11 @@
 				<hsep/>
 			</cell>
 
-			<cell cols="2" pad.v="4">
-				<label text="labels.chan.num_id" text:id="${i}" bright="(:cm_${i} or ((${has_solo}) and !:cs_${i})) ? 0.75 : 1.0" bg.bright="(:cm_${i} or ((${has_solo}) and !:cs_${i})) ? :const_bg_darken : 1.0"/>
+			<cell cols="2" pad.v="4" pad.h="4">
+				<edit
+					ui:id="channel_name_${i}"
+					bright="(:cm_${i} or ((${has_solo}) and !:cs_${i})) ? 0.75 : 1.0"
+					bg.bright="(:cm_${i} or ((${has_solo}) and !:cs_${i})) ? :const_bg_darken : 1.0"/>
 			</cell>
 			<cell cols="2" bg.color="bg" pad.v="2" vreduce="true" vexpand="false">
 				<hsep/>

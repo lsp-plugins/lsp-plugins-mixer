@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2024 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2024 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-plugins-mixer
  * Created on: 25 нояб. 2020 г.
@@ -25,7 +25,7 @@
 
 #define LSP_PLUGINS_MIXER_VERSION_MAJOR       1
 #define LSP_PLUGINS_MIXER_VERSION_MINOR       0
-#define LSP_PLUGINS_MIXER_VERSION_MICRO       8
+#define LSP_PLUGINS_MIXER_VERSION_MICRO       9
 
 #define LSP_PLUGINS_MIXER_VERSION  \
     LSP_MODULE_VERSION( \
@@ -338,13 +338,15 @@ namespace lsp
             LSP_LV2_URI("mixer_x4_mono"),
             LSP_LV2UI_URI("mixer_x4_mono"),
             "m04m",
+            LSP_VST3_UID("m4m     m04m"),
+            LSP_VST3UI_UID("m4m     m04m"),
             LSP_LADSPA_MIXER_BASE + 0,
             LSP_LADSPA_URI("mixer_x4_mono"),
             LSP_CLAP_URI("mixer_x4_mono"),
             LSP_PLUGINS_MIXER_VERSION,
             plugin_classes,
             clap_features_mono,
-            E_DUMP_STATE,
+            E_DUMP_STATE | E_KVT_SYNC,
             mixer_x4_mono_ports,
             "util/mixer/mono.xml",
             NULL,
@@ -363,13 +365,15 @@ namespace lsp
             LSP_LV2_URI("mixer_x8_mono"),
             LSP_LV2UI_URI("mixer_x8_mono"),
             "m08m",
+            LSP_VST3_UID("m8m     m08m"),
+            LSP_VST3UI_UID("m8m     m08m"),
             LSP_LADSPA_MIXER_BASE + 1,
             LSP_LADSPA_URI("mixer_x8_mono"),
             LSP_CLAP_URI("mixer_x8_mono"),
             LSP_PLUGINS_MIXER_VERSION,
             plugin_classes,
             clap_features_mono,
-            E_DUMP_STATE,
+            E_DUMP_STATE | E_KVT_SYNC,
             mixer_x8_mono_ports,
             "util/mixer/mono.xml",
             NULL,
@@ -388,13 +392,15 @@ namespace lsp
             LSP_LV2_URI("mixer_x16_mono"),
             LSP_LV2UI_URI("mixer_x16_mono"),
             "m16m",
+            LSP_VST3_UID("m16m    m16m"),
+            LSP_VST3UI_UID("m16m    m16m"),
             LSP_LADSPA_MIXER_BASE + 2,
             LSP_LADSPA_URI("mixer_x16_mono"),
             LSP_CLAP_URI("mixer_x16_mono"),
             LSP_PLUGINS_MIXER_VERSION,
             plugin_classes,
             clap_features_mono,
-            E_DUMP_STATE,
+            E_DUMP_STATE | E_KVT_SYNC,
             mixer_x16_mono_ports,
             "util/mixer/mono.xml",
             NULL,
@@ -413,13 +419,15 @@ namespace lsp
             LSP_LV2_URI("mixer_x4_stereo"),
             LSP_LV2UI_URI("mixer_x4_stereo"),
             "m04s",
+            LSP_VST3_UID("m4s     m04s"),
+            LSP_VST3UI_UID("m4s     m04s"),
             LSP_LADSPA_MIXER_BASE + 3,
             LSP_LADSPA_URI("mixer_x4_stereo"),
             LSP_CLAP_URI("mixer_x4_stereo"),
             LSP_PLUGINS_MIXER_VERSION,
             plugin_classes,
             clap_features_stereo,
-            E_DUMP_STATE,
+            E_DUMP_STATE | E_KVT_SYNC,
             mixer_x4_stereo_ports,
             "util/mixer/stereo.xml",
             NULL,
@@ -438,13 +446,15 @@ namespace lsp
             LSP_LV2_URI("mixer_x8_stereo"),
             LSP_LV2UI_URI("mixer_x8_stereo"),
             "m08s",
+            LSP_VST3_UID("m8s     m08s"),
+            LSP_VST3UI_UID("m8s     m08s"),
             LSP_LADSPA_MIXER_BASE + 4,
             LSP_LADSPA_URI("mixer_x8_stereo"),
             LSP_CLAP_URI("mixer_x8_stereo"),
             LSP_PLUGINS_MIXER_VERSION,
             plugin_classes,
             clap_features_stereo,
-            E_DUMP_STATE,
+            E_DUMP_STATE | E_KVT_SYNC,
             mixer_x8_stereo_ports,
             "util/mixer/stereo.xml",
             NULL,
@@ -463,13 +473,15 @@ namespace lsp
             LSP_LV2_URI("mixer_x16_stereo"),
             LSP_LV2UI_URI("mixer_x16_stereo"),
             "m16s",
+            LSP_VST3_UID("m16s    m16s"),
+            LSP_VST3UI_UID("m16s    m16s"),
             LSP_LADSPA_MIXER_BASE + 5,
             LSP_LADSPA_URI("mixer_x16_stereo"),
             LSP_CLAP_URI("mixer_x16_stereo"),
             LSP_PLUGINS_MIXER_VERSION,
             plugin_classes,
             clap_features_stereo,
-            E_DUMP_STATE,
+            E_DUMP_STATE | E_KVT_SYNC,
             mixer_x16_stereo_ports,
             "util/mixer/stereo.xml",
             NULL,
