@@ -44,7 +44,7 @@
 					<value id="cg_${i}" vreduce="true" width.min="48" pad.b="4"/>
 				</vbox>
 			</ui:with>
-			<ledmeter height.min="256" vexpand="true" angle="1" bright="(:cm_${i} or ((${has_solo}) and !:cs_${i})) ? :const_led_darken : 1.0">
+			<ledmeter height.min="256" vexpand="true" angle="1" bright="(:cm_${i} or ((${has_solo}) and !:cs_${i})) ? :const_led_darken : 1.0" bg.bright="(:cm_${i} or ((${has_solo}) and !:cs_${i})) ? :const_bg_darken : 1.0">
 				<ledchannel
 					id="cl_${i}"
 					min="-72 db"

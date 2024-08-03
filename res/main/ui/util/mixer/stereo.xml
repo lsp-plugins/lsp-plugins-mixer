@@ -72,7 +72,7 @@
 				<value id="cp_${i}r" detailed="false" pad.v="4" pad.r="6"/>
 				</ui:with>
 				<cell rows="2">
-					<ledmeter height.min="256" vexpand="true" angle="1" bright="(:cm_${i} or ((${has_solo}) and !:cs_${i})) ? :const_led_darken : 1.0">
+					<ledmeter height.min="256" vexpand="true" angle="1" bright="(:cm_${i} or ((${has_solo}) and !:cs_${i})) ? :const_led_darken : 1.0" bg.bright="(:cm_${i} or ((${has_solo}) and !:cs_${i})) ? :const_bg_darken : 1.0">
 						<ledchannel
 							id="cl_${i}l"
 							min="-72 db"
