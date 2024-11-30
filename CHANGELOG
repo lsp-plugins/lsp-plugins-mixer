@@ -3,7 +3,8 @@
 *******************************************************************************
 
 === 1.0.15 ===
-
+* Added sends and returns that allow to connect inputs and outputs via shared
+  memory link.
 
 === 1.0.14 ===
 * Updated build scripts and dependencies.

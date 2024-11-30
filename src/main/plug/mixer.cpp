@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2024 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2024 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-plugins-mixer
  * Created on: 25 нояб. 2020 г.
@@ -23,22 +23,18 @@
 #include <lsp-plug.in/common/debug.h>
 #include <lsp-plug.in/dsp/dsp.h>
 #include <lsp-plug.in/dsp-units/units.h>
+#include <lsp-plug.in/plug-fw/core/AudioBuffer.h>
 #include <lsp-plug.in/plug-fw/meta/func.h>
 #include <lsp-plug.in/plug-fw/meta/ports.h>
 #include <lsp-plug.in/stdlib/string.h>
 
 #include <private/plugins/mixer.h>
-
-/* The size of temporary buffer for audio processing */
-#define BUFFER_SIZE         0x1000U
+#include <lsp-plug.in/shared/debug.h>
 
 namespace lsp
 {
-    static plug::IPort *TRACE_PORT(plug::IPort *p)
-    {
-        lsp_trace("  port id=%s", (p)->metadata()->id);
-        return p;
-    }
+    /* The size of temporary buffer for audio processing */
+    static constexpr size_t BUFFER_SIZE     = 0x1000U;
 
     namespace plugins
     {
@@ -125,17 +121,13 @@ namespace lsp
                 return;
 
             // Initialize pointers
-            vPChannels              = reinterpret_cast<primary_channel_t *>(ptr);
-            ptr                    += szof_pchannels;
-            vMChannels              = reinterpret_cast<mix_channel_t *>(ptr);
-            ptr                    += szof_mchannels;
+            vPChannels              = advance_ptr_bytes<primary_channel_t>(ptr, szof_pchannels);
+            vMChannels              = advance_ptr_bytes<mix_channel_t>(ptr, szof_mchannels);
 
             for (size_t i=0; i<nPChannels; ++i)
             {
-                vWet[i]                 = reinterpret_cast<float *>(ptr);
-                ptr                    += szof_wet;
-                vTemp[i]                = reinterpret_cast<float *>(ptr);
-                ptr                    += szof_temp;
+                vWet[i]                 = advance_ptr_bytes<float>(ptr, szof_wet);
+                vTemp[i]                = advance_ptr_bytes<float>(ptr, szof_temp);
             }
 
             // Initialize channels
@@ -147,6 +139,8 @@ namespace lsp
 
                 c->vIn          = NULL;
                 c->vOut         = NULL;
+                c->vSend        = NULL;
+                c->vRet         = NULL;
                 c->fOldDry      = GAIN_AMP_0_DB;
                 c->fDry         = GAIN_AMP_0_DB;
                 c->fOldWet      = GAIN_AMP_0_DB;
@@ -158,6 +152,8 @@ namespace lsp
 
                 c->pIn          = NULL;
                 c->pOut         = NULL;
+                c->pSend        = NULL;
+                c->pRet         = NULL;
                 c->pDry         = NULL;
                 c->pWet         = NULL;
                 c->pOutGain     = NULL;
@@ -170,6 +166,7 @@ namespace lsp
                 mix_channel_t *c = &vMChannels[i];
 
                 c->vIn          = NULL;
+                c->vRet         = NULL;
                 c->fOldGain[0]  = GAIN_AMP_M_INF_DB;
                 c->fOldGain[1]  = GAIN_AMP_M_INF_DB;
                 c->fGain[0]     = GAIN_AMP_M_INF_DB;
@@ -179,6 +176,7 @@ namespace lsp
                 c->bSolo        = false;
 
                 c->pIn          = NULL;
+                c->pRet         = NULL;
                 c->pSolo        = NULL;
                 c->pMute        = NULL;
                 c->pPhase       = NULL;
@@ -197,22 +195,28 @@ namespace lsp
 
             // Bind primary inputs and outpus
             for (size_t i=0; i<nPChannels; ++i)
-                vPChannels[i].pIn       = TRACE_PORT(ports[port_id++]);
+                BIND_PORT(vPChannels[i].pIn);
             for (size_t i=0; i<nPChannels; ++i)
-                vPChannels[i].pOut      = TRACE_PORT(ports[port_id++]);
+                BIND_PORT(vPChannels[i].pOut);
+            SKIP_PORT("Mixer send name");
+            for (size_t i=0; i<nPChannels; ++i)
+                BIND_PORT(vPChannels[i].pSend);
+            SKIP_PORT("Mixer return name");
+            for (size_t i=0; i<nPChannels; ++i)
+                BIND_PORT(vPChannels[i].pRet);
 
-            pBypass                 = TRACE_PORT(ports[port_id++]);
+            BIND_PORT(pBypass);
 
             // Bind mono output for stereo mixer
             if (nPChannels > 1)
             {
-                pMonoOut                = TRACE_PORT(ports[port_id++]);
-                pBalance                = TRACE_PORT(ports[port_id++]);
+                BIND_PORT(pMonoOut);
+                BIND_PORT(pBalance);
             }
 
-            plug::IPort *dry        = TRACE_PORT(ports[port_id++]);
-            plug::IPort *wet        = TRACE_PORT(ports[port_id++]);
-            plug::IPort *out_gain   = TRACE_PORT(ports[port_id++]);
+            plug::IPort *dry        = NEXT_PORT();
+            plug::IPort *wet        = NEXT_PORT();
+            plug::IPort *out_gain   = NEXT_PORT();
 
             for (size_t i=0; i<nPChannels; ++i)
             {
@@ -224,10 +228,9 @@ namespace lsp
 
             // Bind global level meters
             for (size_t i=0; i<nPChannels; ++i)
-                vPChannels[i].pInLevel      = TRACE_PORT(ports[port_id++]);
+                BIND_PORT(vPChannels[i].pInLevel);
             for (size_t i=0; i<nPChannels; ++i)
-                vPChannels[i].pOutLevel     = TRACE_PORT(ports[port_id++]);
-
+                BIND_PORT(vPChannels[i].pOutLevel);
 
             // Bind ports for audio processing channels
             if (nPChannels > 1)
@@ -237,26 +240,27 @@ namespace lsp
                     mix_channel_t *l        = &vMChannels[i];
                     mix_channel_t *r        = &vMChannels[i+1];
 
-                    l->pIn                  = TRACE_PORT(ports[port_id++]);
-                    r->pIn                  = TRACE_PORT(ports[port_id++]);
+                    BIND_PORT(l->pIn);
+                    BIND_PORT(r->pIn);
+                    SKIP_PORT("Return name");
+                    BIND_PORT(l->pRet);
+                    BIND_PORT(r->pRet);
 
-                    l->pSolo                = TRACE_PORT(ports[port_id++]);
-                    l->pMute                = TRACE_PORT(ports[port_id++]);
-                    l->pPhase               = TRACE_PORT(ports[port_id++]);
+                    BIND_PORT(l->pSolo);
+                    BIND_PORT(l->pMute);
+                    BIND_PORT(l->pPhase);
+                    BIND_PORT(l->pPan);
+                    BIND_PORT(r->pPan);
+                    BIND_PORT(l->pBalance);
+                    BIND_PORT(l->pOutGain);
+                    BIND_PORT(l->pOutLevel);
+                    BIND_PORT(r->pOutLevel);
+
                     r->pSolo                = l->pSolo;
                     r->pMute                = l->pMute;
                     r->pPhase               = l->pPhase;
-
-                    l->pPan                 = TRACE_PORT(ports[port_id++]);
-                    r->pPan                 = TRACE_PORT(ports[port_id++]);
-
-                    l->pBalance             = TRACE_PORT(ports[port_id++]);
-                    l->pOutGain             = TRACE_PORT(ports[port_id++]);
                     r->pBalance             = l->pBalance;
                     r->pOutGain             = l->pOutGain;
-
-                    l->pOutLevel            = TRACE_PORT(ports[port_id++]);
-                    r->pOutLevel            = TRACE_PORT(ports[port_id++]);
                 }
             }
             else
@@ -265,12 +269,15 @@ namespace lsp
                 {
                     mix_channel_t *c        = &vMChannels[i];
 
-                    c->pIn                  = TRACE_PORT(ports[port_id++]);
-                    c->pSolo                = TRACE_PORT(ports[port_id++]);
-                    c->pMute                = TRACE_PORT(ports[port_id++]);
-                    c->pPhase               = TRACE_PORT(ports[port_id++]);
-                    c->pOutGain             = TRACE_PORT(ports[port_id++]);
-                    c->pOutLevel            = TRACE_PORT(ports[port_id++]);
+                    BIND_PORT(c->pIn);
+                    SKIP_PORT("Return name");
+                    BIND_PORT(c->pRet);
+
+                    BIND_PORT(c->pSolo);
+                    BIND_PORT(c->pMute);
+                    BIND_PORT(c->pPhase);
+                    BIND_PORT(c->pOutGain);
+                    BIND_PORT(c->pOutLevel);
                 }
             }
         }
@@ -416,9 +423,21 @@ namespace lsp
                 primary_channel_t *c    = &vPChannels[i];
                 c->vIn                  = c->pIn->buffer<float>();
                 c->vOut                 = c->pOut->buffer<float>();
+
+                core::AudioBuffer *send = c->pSend->buffer<core::AudioBuffer>();
+                c->vSend                = ((send != NULL) && (send->active())) ? send->buffer() : NULL;
+
+                core::AudioBuffer *ret  = c->pRet->buffer<core::AudioBuffer>();
+                c->vRet                 = ((ret!= NULL) && (ret->active())) ? ret->buffer() : NULL;
             }
             for (size_t i=0; i<nMChannels; ++i)
-                vMChannels[i].vIn       = vMChannels[i].pIn->buffer<float>();
+            {
+                mix_channel_t *c        = &vMChannels[i];
+                c->vIn                  = c->pIn->buffer<float>();
+
+                core::AudioBuffer *ret  = c->pRet->buffer<core::AudioBuffer>();
+                c->vRet                 = ((ret!= NULL) && (ret->active())) ? ret->buffer() : NULL;
+            }
 
             // Main processing
             while (samples > 0)
@@ -444,6 +463,17 @@ namespace lsp
                         dsp::lramp2(vTemp[1], l->vIn, l->fOldGain[1], l->fGain[1], to_process);
                         dsp::lramp_add2(vTemp[0], r->vIn, r->fOldGain[0], r->fGain[0], to_process);
                         dsp::lramp_add2(vTemp[1], r->vIn, r->fOldGain[1], r->fGain[1], to_process);
+
+                        if (l->vRet != NULL)
+                        {
+                            dsp::lramp_add2(vTemp[0], l->vRet, l->fOldGain[0], l->fGain[0], to_process);
+                            dsp::lramp_add2(vTemp[1], l->vRet, l->fOldGain[1], l->fGain[1], to_process);
+                        }
+                        if (r->vRet != NULL)
+                        {
+                            dsp::lramp_add2(vTemp[0], r->vRet, r->fOldGain[0], r->fGain[0], to_process);
+                            dsp::lramp_add2(vTemp[1], r->vRet, r->fOldGain[1], r->fGain[1], to_process);
+                        }
 
                         // Perform output level metering
                         float out_l             = dsp::abs_max(vTemp[0], to_process);
@@ -472,6 +502,10 @@ namespace lsp
                     dsp::lramp2(vTemp[1], vWet[1], pr->fOldWet, pl->fWet, to_process);
                     dsp::lramp_add2(vTemp[0], pl->vIn, pl->fOldDry, pl->fDry, to_process);
                     dsp::lramp_add2(vTemp[1], pr->vIn, pr->fOldDry, pl->fDry, to_process);
+                    if (pl->vRet != NULL)
+                        dsp::lramp_add2(vTemp[0], pl->vRet, pl->fOldDry, pl->fDry, to_process);
+                    if (pr->vRet != NULL)
+                        dsp::lramp_add2(vTemp[1], pr->vRet, pr->fOldDry, pl->fDry, to_process);
 
                     // Apply balance and mono
                     dsp::lramp2(vWet[0], vTemp[0], pl->fOldGain[0], pl->fGain[0], to_process);
@@ -499,15 +533,17 @@ namespace lsp
                     {
                         mix_channel_t *c        = &vMChannels[i];
 
-                        // Perform audio mixing of input stereo signal
-                        dsp::mul_k3(vTemp[0], c->vIn, c->fGain[0], to_process);
+                        // Perform audio mixing of input mono signal
+                        dsp::lramp2(vTemp[0], c->vIn, c->fOldGain[0], c->fGain[0], to_process);
+                        if (c->vRet != NULL)
+                            dsp::lramp_add2(vTemp[0], c->vRet, c->fOldGain[0], c->fGain[0], to_process);
 
                         // Perform output level metering
                         float out               = dsp::abs_max(vTemp[0], to_process);
                         c->pOutLevel->set_value(out);
 
                         // Apply mixed channels to the wet signal
-                        dsp::fmadd_k3(vWet[0], vTemp[0], c->fPostGain, to_process);
+                        dsp::lramp_add2(vWet[0], vTemp[0], c->fOldPostGain, c->fPostGain, to_process);
 
                         // Renew old parameters
                         c->fOldGain[0]          = c->fGain[0];
@@ -519,6 +555,8 @@ namespace lsp
                     primary_channel_t *pc   = &vPChannels[0];
                     dsp::lramp2(vWet[0], vWet[0], pc->fOldWet, pc->fWet, to_process);
                     dsp::lramp_add2(vWet[0], pc->vIn, pc->fDry, pc->fOldDry, to_process);
+                    if (pc->vRet != NULL)
+                        dsp::lramp_add2(vWet[0], pc->vRet, pc->fDry, pc->fOldDry, to_process);
 
                     // Renew old parameters
                     pc->fOldWet     = pc->fWet;
@@ -532,9 +570,18 @@ namespace lsp
                 {
                     primary_channel_t *c    = &vPChannels[i];
 
-                    c->sBypass.process(c->vOut, c->vIn, vWet[i], to_process);
+                    const float *in         = c->vIn;
+                    if (c->vRet != NULL)
+                    {
+                        dsp::add3(vTemp[0], c->vIn, c->vRet, to_process);
+                        in                      = vTemp[0];
+                    }
 
-                    float in_lvl            = dsp::abs_max(c->vIn, to_process);
+                    c->sBypass.process(c->vOut, in, vWet[i], to_process);
+                    if (c->vSend != NULL)
+                        dsp::copy(c->vSend, c->vOut, to_process);
+
+                    float in_lvl            = dsp::abs_max(in, to_process);
                     float out_lvl           = dsp::abs_max(vWet[i], to_process);
 
                     c->pInLevel->set_value(in_lvl);
@@ -548,6 +595,10 @@ namespace lsp
                     primary_channel_t *c    = &vPChannels[i];
                     c->vIn                 += to_process;
                     c->vOut                += to_process;
+                    if (c->vSend != NULL)
+                        c->vSend               += to_process;
+                    if (c->vRet != NULL)
+                        c->vRet                += to_process;
                 }
                 for (size_t i=0; i<nMChannels; ++i)
                     vMChannels[i].vIn      += to_process;
@@ -564,6 +615,8 @@ namespace lsp
                 v->write_object("sBypass", &p->sBypass);
                 v->write("vIn", p->vIn);
                 v->write("vOut", p->vOut);
+                v->write("vSend", p->vSend);
+                v->write("vRet", p->vRet);
                 v->write("fOldDry", p->fOldDry);
                 v->write("fDry", p->fDry);
                 v->write("fOldWet", p->fOldWet);
@@ -573,6 +626,8 @@ namespace lsp
 
                 v->write("pIn", p->pIn);
                 v->write("pOut", p->pOut);
+                v->write("pSend", p->pSend);
+                v->write("pRet", p->pRet);
                 v->write("pDry", p->pDry);
                 v->write("pWet", p->pWet);
                 v->write("pOutGain", p->pOutGain);
@@ -587,6 +642,7 @@ namespace lsp
                 mix_channel_t *c = &vMChannels[i];
 
                 v->write("vIn", c->vIn);
+                v->write("vRet", c->vRet);
                 v->writev("fOldGain", c->fOldGain, 2);
                 v->writev("fGain", c->fGain, 2);
                 v->write("fOldPostGain", c->fOldPostGain);
@@ -594,6 +650,7 @@ namespace lsp
                 v->write("bSolo", c->bSolo);
 
                 v->write("pIn", c->pIn);
+                v->write("pRet", c->pRet);
                 v->write("pSolo", c->pSolo);
                 v->write("pMute", c->pMute);
                 v->write("pPhase", c->pPhase);

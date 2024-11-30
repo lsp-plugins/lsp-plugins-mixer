@@ -40,8 +40,19 @@ namespace lsp
     {
         //-------------------------------------------------------------------------
         // Plugin metadata
+        #define MIX_MONO_PORTS \
+            PORTS_MONO_PLUGIN, \
+            OPT_SEND_MONO("send", "sout", "Mix send"), \
+            OPT_RETURN_MONO("return", "rin", "Mix return")
+
+        #define MIX_STEREO_PORTS \
+            PORTS_STEREO_PLUGIN, \
+            OPT_SEND_STEREO("send", "sout", "Mix send"), \
+            OPT_RETURN_STEREO("return", "rin", "Mix return")
+
         #define MIX_MONO_CHANNEL(id, label) \
             AUDIO_INPUT("in" id, "Audio input " label), \
+            OPT_RETURN_MONO("ret" id, "rin" id, "Audio channel " label " return"), \
             SWITCH("cs" id, "Channel solo " label, 0.0f), \
             SWITCH("cm" id, "Channel mute " label, 0.0f), \
             SWITCH("ci" id, "Channel phase invert " label, 0.0f), \
@@ -51,6 +62,7 @@ namespace lsp
         #define MIX_STEREO_CHANNEL(id, label) \
             AUDIO_INPUT("in" id "l", "Audio input left " label), \
             AUDIO_INPUT("in" id "r", "Audio input right " label), \
+            OPT_RETURN_STEREO("ret" id, "rin" id, "Audio channel " label " return"), \
             SWITCH("cs" id, "Channel solo " label, 0.0f), \
             SWITCH("cm" id, "Channel mute " label, 0.0f), \
             SWITCH("ci" id, "Channel phase invert " label, 0.0f), \
@@ -81,7 +93,7 @@ namespace lsp
 
         static const port_t mixer_x4_mono_ports[] =
         {
-            PORTS_MONO_PLUGIN,
+            MIX_MONO_PORTS,
             BYPASS,
             MIX_MONO_GLOBAL,
 
@@ -95,7 +107,7 @@ namespace lsp
 
         static const port_t mixer_x8_mono_ports[] =
         {
-            PORTS_MONO_PLUGIN,
+            MIX_MONO_PORTS,
             BYPASS,
             MIX_MONO_GLOBAL,
 
@@ -113,7 +125,7 @@ namespace lsp
 
         static const port_t mixer_x16_mono_ports[] =
         {
-            PORTS_MONO_PLUGIN,
+            MIX_MONO_PORTS,
             BYPASS,
             MIX_MONO_GLOBAL,
 
@@ -139,7 +151,7 @@ namespace lsp
 
         static const port_t mixer_x4_stereo_ports[] =
         {
-            PORTS_STEREO_PLUGIN,
+            MIX_STEREO_PORTS,
             BYPASS,
             MIX_STEREO_GLOBAL,
 
@@ -153,7 +165,7 @@ namespace lsp
 
         static const port_t mixer_x8_stereo_ports[] =
         {
-            PORTS_STEREO_PLUGIN,
+            MIX_STEREO_PORTS,
             BYPASS,
             MIX_STEREO_GLOBAL,
 
@@ -171,7 +183,7 @@ namespace lsp
 
         static const port_t mixer_x16_stereo_ports[] =
         {
-            PORTS_STEREO_PLUGIN,
+            MIX_STEREO_PORTS,
             BYPASS,
             MIX_STEREO_GLOBAL,
 

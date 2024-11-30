@@ -47,6 +47,8 @@ namespace lsp
 
                     float              *vIn;            // Input buffer pointer
                     float              *vOut;           // Output buffer pointer
+                    float              *vSend;          // Send buffer pointer
+                    float              *vRet;           // Return buffer pointer
                     float               fOldDry;        // Old dry signal amount
                     float               fDry;           // Dry signal amount
                     float               fOldWet;        // Old wet signal amount
@@ -56,6 +58,8 @@ namespace lsp
 
                     plug::IPort        *pIn;            // Input data port
                     plug::IPort        *pOut;           // Output data port
+                    plug::IPort        *pSend;          // Send data port
+                    plug::IPort        *pRet;           // Return data port
                     plug::IPort        *pDry;           // Dry signal amount
                     plug::IPort        *pWet;           // Wet signal amount
                     plug::IPort        *pOutGain;       // Output gain
@@ -66,6 +70,7 @@ namespace lsp
                 typedef struct mix_channel_t
                 {
                     float              *vIn;            // Input buffer
+                    float              *vRet;           // Return buffer
                     float               fOldGain[2];    // Old gain value
                     float               fGain[2];       // Gain for left and right outputs
                     float               fOldPostGain;   // Old post-gain value (after metering stage)
@@ -73,6 +78,7 @@ namespace lsp
                     bool                bSolo;          // Solo flag
 
                     plug::IPort        *pIn;            // Input data port
+                    plug::IPort        *pRet;           // Input return port
                     plug::IPort        *pSolo;          // Solo switch
                     plug::IPort        *pMute;          // Mute switch
                     plug::IPort        *pPhase;         // Phase invert switch
