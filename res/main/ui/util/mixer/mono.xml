@@ -27,7 +27,7 @@
 				<hsep/>
 			</cell>
 			<cell cols="2">
-				<shmlink id="ret_${i}" />
+				<shmlink id="ret_${i}" value.maxlen="5" text.clip="true" />
 			</cell>
 			<cell cols="2" bg.color="bg" pad.v="2" vreduce="true" vexpand="false">
 				<hsep/>
