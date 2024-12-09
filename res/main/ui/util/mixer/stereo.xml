@@ -10,24 +10,33 @@
 		<!-- Input channels -->
 		<ui:for id="i" first="1" count=":channels">
 			<!-- Column 1 -->
-			<cell cols="3" pad.v="4">
-				<label/>
-			</cell>
+			<ui:if test=":i ieq 1">
+				<cell cols="12">
+					<hbox>
+						<shmlink id="return" pad.v="4" pad.l="6"/>
+						<shmlink id="send" pad.v="4" pad.h="6"/>
+						<vsep bg.color="bg" pad.h="2" hreduce="true" hexpand="false"/>
+						<void hexpand="true"/>
+					</hbox>
+				</cell>
+			</ui:if>
+			<ui:if test=":i igt 4">
+				<cell cols="3" pad.v="4">
+					<label/>
+				</cell>
+			</ui:if>
 			<cell cols="3" bg.color="bg" pad.v="2" vreduce="true" vexpand="false">
 				<hsep/>
 			</cell>
 
 			<cell cols="2" pad.v="4" pad.h="4">
-				<edit
-					ui:id="channel_name_${i}"
-					bright="(:cm_${i} or ((${has_solo}) and !:cs_${i})) ? 0.75 : 1.0"
-					bg.bright="(:cm_${i} or ((${has_solo}) and !:cs_${i})) ? :const_bg_darken : 1.0"/>
+				<edit ui:id="channel_name_${i}" bright="(:cm_${i} or ((${has_solo}) and !:cs_${i})) ? 0.75 : 1.0" bg.bright="(:cm_${i} or ((${has_solo}) and !:cs_${i})) ? :const_bg_darken : 1.0"/>
 			</cell>
 			<cell cols="2" bg.color="bg" pad.v="2" vreduce="true" vexpand="false">
 				<hsep/>
 			</cell>
-			<cell cols="2">
-				<shmlink id="ret_${i}" value.maxlen="5" text.clip="true" hfill="true" />
+			<cell cols="2" pad.v="4" pad.h="6">
+				<shmlink id="ret_${i}" value.maxlen="3" text.clip="true" hfill="true"/>
 			</cell>
 			<cell cols="2" bg.color="bg" pad.v="2" vreduce="true" vexpand="false">
 				<hsep/>
@@ -110,26 +119,14 @@
 
 		<!-- Master section -->
 		<!-- Column 1 -->
-		<cell cols="2">
+		<cell cols="2" rows="5">
 			<label text="labels.chan.output"/>
 		</cell>
+
 		<cell cols="2" bg.color="bg" pad.v="2" vreduce="true" vexpand="false">
 			<hsep/>
 		</cell>
-		<cell cols="2">
-			<shmlink id="return" />
-		</cell>
-		<cell cols="2" bg.color="bg" pad.v="2" vreduce="true" vexpand="false">
-			<hsep/>
-		</cell>
-		<cell cols="2">
-			<shmlink id="send" />
-		</cell>
-		
-		<cell cols="2" bg.color="bg" pad.v="2" vreduce="true" vexpand="false">
-			<hsep/>
-		</cell>
-		
+
 		<cell cols="2" pad.v="4" pad.h="6">
 			<button id="mono" text="labels.signal.mono" ui:inject="Button_orange_8" font.size="8" hfill="true" expand="false"/>
 		</cell>
