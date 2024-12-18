@@ -19,6 +19,8 @@
 		<b>Bypass</b> - bypass switch, when turned on (led indicator is shining), the output signal is similar to input signal. That does not mean
 		that the plugin is not working.
 	</li>
+	<li><b>Return</b> - shared memory link to receive signal which is added to the signal of the mixer's main input.</li>
+	<li><b>Send</b> -  shared memory link to send the copy the main output signal of mixer.</li>
 	<li><b>Dry amount</b> - the amount of the unprocessed (dry) signal in the output signal.</li>
 	<li><b>Wet amount</b> - the amount of the processed (wet) signal in the output signal.</li>
 	<?php if ($m == 's') { ?>
@@ -30,6 +32,8 @@
 </ul>
 <p><b>Mixer channel controls:</b></p>
 <ul>
+	<li><b>Channel label</b> - custom user-defined editable channel label.</li>
+	<li><b>Return</b> - shared memory link to receive signal which is added to the input signal of the channel.</li>
 	<li><b>S</b> - solo the channel.</li>
 	<li><b>M</b> - mute the channel.</li>
 	<li><b>P</b> - invert the phase for the channel.</li>
