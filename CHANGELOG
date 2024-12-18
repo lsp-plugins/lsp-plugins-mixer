@@ -2,6 +2,9 @@
 * RECENT CHANGES
 *******************************************************************************
 
+=== 1.0.16 ===
+
+
 === 1.0.15 ===
 * Added sends and returns that allow to connect inputs and outputs via shared
   memory link.
