@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2024 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2024 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-plugins-mixer
  * Created on: 25 нояб. 2020 г.
@@ -56,7 +56,7 @@ namespace lsp
             SWITCH("cs" id, "Channel solo " label, 0.0f), \
             SWITCH("cm" id, "Channel mute " label, 0.0f), \
             SWITCH("ci" id, "Channel phase invert " label, 0.0f), \
-            LOG_CONTROL("cg" id, "Channel gain " label, U_GAIN_AMP, meta::mixer::CHANNEL_GAIN), \
+            LOG_CONTROL("cg" id, "Channel gain " label, "Gain " label, U_GAIN_AMP, meta::mixer::CHANNEL_GAIN), \
             METER_GAIN("cl" id, "Channel signal level " label, GAIN_AMP_P_48_DB)
 
         #define MIX_STEREO_CHANNEL(id, label) \
@@ -69,14 +69,14 @@ namespace lsp
             PAN_CTL("cp" id "l", "Channel pan left " label, -100.0f), \
             PAN_CTL("cp" id "r", "Channel pan right " label, 100.0f), \
             PAN_CTL("cb" id, "Channel output balance " label, 0.0f), \
-            LOG_CONTROL("cg" id, "Channel gain " label, U_GAIN_AMP, meta::mixer::CHANNEL_GAIN), \
+            LOG_CONTROL("cg" id, "Channel gain " label, "Gain " label, U_GAIN_AMP, meta::mixer::CHANNEL_GAIN), \
             METER_GAIN("cl" id "l", "Channel signal level left " label, GAIN_AMP_P_48_DB), \
             METER_GAIN("cl" id "r", "Channel signal level right " label, GAIN_AMP_P_48_DB)
 
         #define MIX_MONO_GLOBAL \
             DRY_GAIN(1.0f), \
             WET_GAIN(1.0f), \
-            LOG_CONTROL("g_out", "Output gain", U_GAIN_AMP, meta::mixer::CHANNEL_GAIN), \
+            LOG_CONTROL("g_out", "Output gain", "Out gain", U_GAIN_AMP, meta::mixer::CHANNEL_GAIN), \
             METER_GAIN("ilm", "Input level meter", GAIN_AMP_P_48_DB), \
             METER_GAIN("olm", "Output level meter", GAIN_AMP_P_48_DB)
 
@@ -85,7 +85,7 @@ namespace lsp
             PAN_CTL("bal", "Output balance", 0.0f), \
             DRY_GAIN(1.0f), \
             WET_GAIN(1.0f), \
-            LOG_CONTROL("g_out", "Output gain", U_GAIN_AMP, meta::mixer::CHANNEL_GAIN), \
+            LOG_CONTROL("g_out", "Output gain", "Out gain", U_GAIN_AMP, meta::mixer::CHANNEL_GAIN), \
             METER_GAIN("ilm_l", "Input level meter left", GAIN_AMP_P_48_DB), \
             METER_GAIN("ilm_r", "Input level meter right", GAIN_AMP_P_48_DB), \
             METER_GAIN("olm_l", "Output level meter left", GAIN_AMP_P_48_DB), \
