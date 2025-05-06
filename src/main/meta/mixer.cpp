@@ -53,9 +53,9 @@ namespace lsp
         #define MIX_MONO_CHANNEL(id, label) \
             AUDIO_INPUT("in" id, "Audio input " label), \
             OPT_RETURN_MONO("ret" id, "rin" id, "Audio channel " label " return"), \
-            SWITCH("cs" id, "Channel solo " label, 0.0f), \
-            SWITCH("cm" id, "Channel mute " label, 0.0f), \
-            SWITCH("ci" id, "Channel phase invert " label, 0.0f), \
+            SWITCH("cs" id, "Channel solo " label, "Solo " label, 0.0f), \
+            SWITCH("cm" id, "Channel mute " label, "Mute " label, 0.0f), \
+            SWITCH("ci" id, "Channel phase invert " label, "Phase " label, 0.0f), \
             LOG_CONTROL("cg" id, "Channel gain " label, "Gain " label, U_GAIN_AMP, meta::mixer::CHANNEL_GAIN), \
             METER_GAIN("cl" id, "Channel signal level " label, GAIN_AMP_P_48_DB)
 
@@ -63,9 +63,9 @@ namespace lsp
             AUDIO_INPUT("in" id "l", "Audio input left " label), \
             AUDIO_INPUT("in" id "r", "Audio input right " label), \
             OPT_RETURN_STEREO("ret" id, "rin" id, "Audio channel " label " return"), \
-            SWITCH("cs" id, "Channel solo " label, 0.0f), \
-            SWITCH("cm" id, "Channel mute " label, 0.0f), \
-            SWITCH("ci" id, "Channel phase invert " label, 0.0f), \
+            SWITCH("cs" id, "Channel solo " label, "Solo " label, 0.0f), \
+            SWITCH("cm" id, "Channel mute " label, "Mute " label, 0.0f), \
+            SWITCH("ci" id, "Channel phase invert " label, "Phase " label, 0.0f), \
             PAN_CTL("cp" id "l", "Channel pan left " label, -100.0f), \
             PAN_CTL("cp" id "r", "Channel pan right " label, 100.0f), \
             PAN_CTL("cb" id, "Channel output balance " label, 0.0f), \
@@ -81,7 +81,7 @@ namespace lsp
             METER_GAIN("olm", "Output level meter", GAIN_AMP_P_48_DB)
 
         #define MIX_STEREO_GLOBAL \
-            SWITCH("mono", "Mono output", 0.0f), \
+            SWITCH("mono", "Mono output", "Mono", 0.0f), \
             PAN_CTL("bal", "Output balance", 0.0f), \
             DRY_GAIN(1.0f), \
             WET_GAIN(1.0f), \
