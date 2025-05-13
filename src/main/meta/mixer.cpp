@@ -66,9 +66,9 @@ namespace lsp
             SWITCH("cs" id, "Channel solo " label, "Solo " label, 0.0f), \
             SWITCH("cm" id, "Channel mute " label, "Mute " label, 0.0f), \
             SWITCH("ci" id, "Channel phase invert " label, "Phase " label, 0.0f), \
-            PAN_CTL("cp" id "l", "Channel pan left " label, -100.0f), \
-            PAN_CTL("cp" id "r", "Channel pan right " label, 100.0f), \
-            PAN_CTL("cb" id, "Channel output balance " label, 0.0f), \
+            PAN_CTL("cp" id "l", "Channel pan left " label, "Pan L " label, -100.0f), \
+            PAN_CTL("cp" id "r", "Channel pan right " label, "Pan R " label, 100.0f), \
+            PAN_CTL("cb" id, "Channel output balance " label, "Balance " label, 0.0f), \
             LOG_CONTROL("cg" id, "Channel gain " label, "Gain " label, U_GAIN_AMP, meta::mixer::CHANNEL_GAIN), \
             METER_GAIN("cl" id "l", "Channel signal level left " label, GAIN_AMP_P_48_DB), \
             METER_GAIN("cl" id "r", "Channel signal level right " label, GAIN_AMP_P_48_DB)
@@ -82,7 +82,7 @@ namespace lsp
 
         #define MIX_STEREO_GLOBAL \
             SWITCH("mono", "Mono output", "Mono", 0.0f), \
-            PAN_CTL("bal", "Output balance", 0.0f), \
+            PAN_CTL("bal", "Output balance", "Balance", 0.0f), \
             DRY_GAIN(1.0f), \
             WET_GAIN(1.0f), \
             LOG_CONTROL("g_out", "Output gain", "Out gain", U_GAIN_AMP, meta::mixer::CHANNEL_GAIN), \
