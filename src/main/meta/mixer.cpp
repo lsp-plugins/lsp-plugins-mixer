@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2024 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2024 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-plugins-mixer
  * Created on: 25 нояб. 2020 г.
@@ -25,7 +25,7 @@
 
 #define LSP_PLUGINS_MIXER_VERSION_MAJOR       1
 #define LSP_PLUGINS_MIXER_VERSION_MINOR       0
-#define LSP_PLUGINS_MIXER_VERSION_MICRO       16
+#define LSP_PLUGINS_MIXER_VERSION_MICRO       17
 
 #define LSP_PLUGINS_MIXER_VERSION  \
     LSP_MODULE_VERSION( \
@@ -53,39 +53,39 @@ namespace lsp
         #define MIX_MONO_CHANNEL(id, label) \
             AUDIO_INPUT("in" id, "Audio input " label), \
             OPT_RETURN_MONO("ret" id, "rin" id, "Audio channel " label " return"), \
-            SWITCH("cs" id, "Channel solo " label, 0.0f), \
-            SWITCH("cm" id, "Channel mute " label, 0.0f), \
-            SWITCH("ci" id, "Channel phase invert " label, 0.0f), \
-            LOG_CONTROL("cg" id, "Channel gain " label, U_GAIN_AMP, meta::mixer::CHANNEL_GAIN), \
+            SWITCH("cs" id, "Channel solo " label, "Solo " label, 0.0f), \
+            SWITCH("cm" id, "Channel mute " label, "Mute " label, 0.0f), \
+            SWITCH("ci" id, "Channel phase invert " label, "Phase " label, 0.0f), \
+            LOG_CONTROL("cg" id, "Channel gain " label, "Gain " label, U_GAIN_AMP, meta::mixer::CHANNEL_GAIN), \
             METER_GAIN("cl" id, "Channel signal level " label, GAIN_AMP_P_48_DB)
 
         #define MIX_STEREO_CHANNEL(id, label) \
             AUDIO_INPUT("in" id "l", "Audio input left " label), \
             AUDIO_INPUT("in" id "r", "Audio input right " label), \
             OPT_RETURN_STEREO("ret" id, "rin" id, "Audio channel " label " return"), \
-            SWITCH("cs" id, "Channel solo " label, 0.0f), \
-            SWITCH("cm" id, "Channel mute " label, 0.0f), \
-            SWITCH("ci" id, "Channel phase invert " label, 0.0f), \
-            PAN_CTL("cp" id "l", "Channel pan left " label, -100.0f), \
-            PAN_CTL("cp" id "r", "Channel pan right " label, 100.0f), \
-            PAN_CTL("cb" id, "Channel output balance " label, 0.0f), \
-            LOG_CONTROL("cg" id, "Channel gain " label, U_GAIN_AMP, meta::mixer::CHANNEL_GAIN), \
+            SWITCH("cs" id, "Channel solo " label, "Solo " label, 0.0f), \
+            SWITCH("cm" id, "Channel mute " label, "Mute " label, 0.0f), \
+            SWITCH("ci" id, "Channel phase invert " label, "Phase " label, 0.0f), \
+            PAN_CTL("cp" id "l", "Channel pan left " label, "Pan L " label, -100.0f), \
+            PAN_CTL("cp" id "r", "Channel pan right " label, "Pan R " label, 100.0f), \
+            PAN_CTL("cb" id, "Channel output balance " label, "Balance " label, 0.0f), \
+            LOG_CONTROL("cg" id, "Channel gain " label, "Gain " label, U_GAIN_AMP, meta::mixer::CHANNEL_GAIN), \
             METER_GAIN("cl" id "l", "Channel signal level left " label, GAIN_AMP_P_48_DB), \
             METER_GAIN("cl" id "r", "Channel signal level right " label, GAIN_AMP_P_48_DB)
 
         #define MIX_MONO_GLOBAL \
             DRY_GAIN(1.0f), \
             WET_GAIN(1.0f), \
-            LOG_CONTROL("g_out", "Output gain", U_GAIN_AMP, meta::mixer::CHANNEL_GAIN), \
+            LOG_CONTROL("g_out", "Output gain", "Out gain", U_GAIN_AMP, meta::mixer::CHANNEL_GAIN), \
             METER_GAIN("ilm", "Input level meter", GAIN_AMP_P_48_DB), \
             METER_GAIN("olm", "Output level meter", GAIN_AMP_P_48_DB)
 
         #define MIX_STEREO_GLOBAL \
-            SWITCH("mono", "Mono output", 0.0f), \
-            PAN_CTL("bal", "Output balance", 0.0f), \
+            SWITCH("mono", "Mono output", "Mono", 0.0f), \
+            PAN_CTL("bal", "Output balance", "Balance", 0.0f), \
             DRY_GAIN(1.0f), \
             WET_GAIN(1.0f), \
-            LOG_CONTROL("g_out", "Output gain", U_GAIN_AMP, meta::mixer::CHANNEL_GAIN), \
+            LOG_CONTROL("g_out", "Output gain", "Out gain", U_GAIN_AMP, meta::mixer::CHANNEL_GAIN), \
             METER_GAIN("ilm_l", "Input level meter left", GAIN_AMP_P_48_DB), \
             METER_GAIN("ilm_r", "Input level meter right", GAIN_AMP_P_48_DB), \
             METER_GAIN("olm_l", "Output level meter left", GAIN_AMP_P_48_DB), \
