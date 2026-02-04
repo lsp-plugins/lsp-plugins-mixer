@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2026 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2026 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-plugins-mixer
  * Created on: 25 нояб. 2020 г.
@@ -20,6 +20,7 @@
  */
 
 #include <lsp-plug.in/plug-fw/meta/ports.h>
+#include <lsp-plug.in/plug-fw/meta/registry.h>
 #include <lsp-plug.in/shared/meta/developers.h>
 #include <private/meta/mixer.h>
 
@@ -368,6 +369,7 @@ namespace lsp
             mixer_x4_mono_port_groups,
             &mixer_bundle
         };
+        LSP_REGISTER_METADATA(mixer_x4_mono);
 
         const plugin_t mixer_x8_mono =
         {
@@ -398,6 +400,7 @@ namespace lsp
             mixer_x8_mono_port_groups,
             &mixer_bundle
         };
+        LSP_REGISTER_METADATA(mixer_x8_mono);
 
         const plugin_t mixer_x16_mono =
         {
@@ -428,6 +431,7 @@ namespace lsp
             mixer_x16_mono_port_groups,
             &mixer_bundle
         };
+        LSP_REGISTER_METADATA(mixer_x16_mono);
 
         const plugin_t mixer_x4_stereo =
         {
@@ -458,6 +462,7 @@ namespace lsp
             mixer_x4_stereo_port_groups,
             &mixer_bundle
         };
+        LSP_REGISTER_METADATA(mixer_x4_stereo);
 
         const plugin_t mixer_x8_stereo =
         {
@@ -488,6 +493,7 @@ namespace lsp
             mixer_x8_stereo_port_groups,
             &mixer_bundle
         };
+        LSP_REGISTER_METADATA(mixer_x8_stereo);
 
         const plugin_t mixer_x16_stereo =
         {
@@ -518,6 +524,7 @@ namespace lsp
             mixer_x16_stereo_port_groups,
             &mixer_bundle
         };
+        LSP_REGISTER_METADATA(mixer_x16_stereo);
 
     } /* namespace meta */
 } /* namespace lsp */
