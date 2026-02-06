@@ -1,0 +1,15 @@
+{
+	"mixer": {
+		"description": "Выполняет смешивание нескольких звуковых каналов в один.",
+		"name": "Микшер"
+	},
+	"launcher": {
+		"mixer_x16_mono": "x16 Моно",
+		"mixer_x16_stereo": "x16 Стерео",
+		"mixer_x4_mono": "x4 Моно",
+		"mixer_x4_stereo": "x4 Стерео",
+		"mixer_x8_mono": "x8 Моно",
+		"mixer_x8_stereo": "x8 Стерео"
+	}
+}
+
