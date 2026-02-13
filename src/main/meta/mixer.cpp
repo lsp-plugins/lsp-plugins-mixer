@@ -364,7 +364,7 @@ namespace lsp
             clap_features_mono,
             E_DUMP_STATE | E_KVT_SYNC,
             mixer_x4_mono_ports,
-            "util/mixer/mono.xml",
+            "plugins/util/mixer/mono.xml",
             NULL,
             mixer_x4_mono_port_groups,
             &mixer_bundle
@@ -395,7 +395,7 @@ namespace lsp
             clap_features_mono,
             E_DUMP_STATE | E_KVT_SYNC,
             mixer_x8_mono_ports,
-            "util/mixer/mono.xml",
+            "plugins/util/mixer/mono.xml",
             NULL,
             mixer_x8_mono_port_groups,
             &mixer_bundle
@@ -426,7 +426,7 @@ namespace lsp
             clap_features_mono,
             E_DUMP_STATE | E_KVT_SYNC,
             mixer_x16_mono_ports,
-            "util/mixer/mono.xml",
+            "plugins/util/mixer/mono.xml",
             NULL,
             mixer_x16_mono_port_groups,
             &mixer_bundle
@@ -457,7 +457,7 @@ namespace lsp
             clap_features_stereo,
             E_DUMP_STATE | E_KVT_SYNC,
             mixer_x4_stereo_ports,
-            "util/mixer/stereo.xml",
+            "plugins/util/mixer/stereo.xml",
             NULL,
             mixer_x4_stereo_port_groups,
             &mixer_bundle
@@ -488,7 +488,7 @@ namespace lsp
             clap_features_stereo,
             E_DUMP_STATE | E_KVT_SYNC,
             mixer_x8_stereo_ports,
-            "util/mixer/stereo.xml",
+            "plugins/util/mixer/stereo.xml",
             NULL,
             mixer_x8_stereo_port_groups,
             &mixer_bundle
@@ -519,7 +519,7 @@ namespace lsp
             clap_features_stereo,
             E_DUMP_STATE | E_KVT_SYNC,
             mixer_x16_stereo_ports,
-            "util/mixer/stereo.xml",
+            "plugins/util/mixer/stereo.xml",
             NULL,
             mixer_x16_stereo_port_groups,
             &mixer_bundle
