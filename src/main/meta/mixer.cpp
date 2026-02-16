@@ -367,7 +367,8 @@ namespace lsp
             "plugins/util/mixer/mono.xml",
             NULL,
             mixer_x4_mono_port_groups,
-            &mixer_bundle
+            &mixer_bundle,
+            4
         };
         LSP_REGISTER_METADATA(mixer_x4_mono);
 
@@ -398,7 +399,8 @@ namespace lsp
             "plugins/util/mixer/mono.xml",
             NULL,
             mixer_x8_mono_port_groups,
-            &mixer_bundle
+            &mixer_bundle,
+            5
         };
         LSP_REGISTER_METADATA(mixer_x8_mono);
 
@@ -429,7 +431,8 @@ namespace lsp
             "plugins/util/mixer/mono.xml",
             NULL,
             mixer_x16_mono_port_groups,
-            &mixer_bundle
+            &mixer_bundle,
+            6
         };
         LSP_REGISTER_METADATA(mixer_x16_mono);
 
@@ -460,7 +463,8 @@ namespace lsp
             "plugins/util/mixer/stereo.xml",
             NULL,
             mixer_x4_stereo_port_groups,
-            &mixer_bundle
+            &mixer_bundle,
+            1
         };
         LSP_REGISTER_METADATA(mixer_x4_stereo);
 
@@ -491,7 +495,8 @@ namespace lsp
             "plugins/util/mixer/stereo.xml",
             NULL,
             mixer_x8_stereo_port_groups,
-            &mixer_bundle
+            &mixer_bundle,
+            2
         };
         LSP_REGISTER_METADATA(mixer_x8_stereo);
 
@@ -522,12 +527,10 @@ namespace lsp
             "plugins/util/mixer/stereo.xml",
             NULL,
             mixer_x16_stereo_port_groups,
-            &mixer_bundle
+            &mixer_bundle,
+            3
         };
         LSP_REGISTER_METADATA(mixer_x16_stereo);
 
     } /* namespace meta */
 } /* namespace lsp */
-
-
-
