@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2026 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2026 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-plugins-mixer
  * Created on: 25 нояб. 2020 г.
@@ -20,12 +20,13 @@
  */
 
 #include <lsp-plug.in/plug-fw/meta/ports.h>
+#include <lsp-plug.in/plug-fw/meta/registry.h>
 #include <lsp-plug.in/shared/meta/developers.h>
 #include <private/meta/mixer.h>
 
 #define LSP_PLUGINS_MIXER_VERSION_MAJOR       1
 #define LSP_PLUGINS_MIXER_VERSION_MINOR       0
-#define LSP_PLUGINS_MIXER_VERSION_MICRO       21
+#define LSP_PLUGINS_MIXER_VERSION_MICRO       22
 
 #define LSP_PLUGINS_MIXER_VERSION  \
     LSP_MODULE_VERSION( \
@@ -363,11 +364,13 @@ namespace lsp
             clap_features_mono,
             E_DUMP_STATE | E_KVT_SYNC,
             mixer_x4_mono_ports,
-            "util/mixer/mono.xml",
+            "plugins/util/mixer/mono.xml",
             NULL,
             mixer_x4_mono_port_groups,
-            &mixer_bundle
+            &mixer_bundle,
+            4
         };
+        LSP_REGISTER_METADATA(mixer_x4_mono);
 
         const plugin_t mixer_x8_mono =
         {
@@ -393,11 +396,13 @@ namespace lsp
             clap_features_mono,
             E_DUMP_STATE | E_KVT_SYNC,
             mixer_x8_mono_ports,
-            "util/mixer/mono.xml",
+            "plugins/util/mixer/mono.xml",
             NULL,
             mixer_x8_mono_port_groups,
-            &mixer_bundle
+            &mixer_bundle,
+            5
         };
+        LSP_REGISTER_METADATA(mixer_x8_mono);
 
         const plugin_t mixer_x16_mono =
         {
@@ -423,11 +428,13 @@ namespace lsp
             clap_features_mono,
             E_DUMP_STATE | E_KVT_SYNC,
             mixer_x16_mono_ports,
-            "util/mixer/mono.xml",
+            "plugins/util/mixer/mono.xml",
             NULL,
             mixer_x16_mono_port_groups,
-            &mixer_bundle
+            &mixer_bundle,
+            6
         };
+        LSP_REGISTER_METADATA(mixer_x16_mono);
 
         const plugin_t mixer_x4_stereo =
         {
@@ -453,11 +460,13 @@ namespace lsp
             clap_features_stereo,
             E_DUMP_STATE | E_KVT_SYNC,
             mixer_x4_stereo_ports,
-            "util/mixer/stereo.xml",
+            "plugins/util/mixer/stereo.xml",
             NULL,
             mixer_x4_stereo_port_groups,
-            &mixer_bundle
+            &mixer_bundle,
+            1
         };
+        LSP_REGISTER_METADATA(mixer_x4_stereo);
 
         const plugin_t mixer_x8_stereo =
         {
@@ -483,11 +492,13 @@ namespace lsp
             clap_features_stereo,
             E_DUMP_STATE | E_KVT_SYNC,
             mixer_x8_stereo_ports,
-            "util/mixer/stereo.xml",
+            "plugins/util/mixer/stereo.xml",
             NULL,
             mixer_x8_stereo_port_groups,
-            &mixer_bundle
+            &mixer_bundle,
+            2
         };
+        LSP_REGISTER_METADATA(mixer_x8_stereo);
 
         const plugin_t mixer_x16_stereo =
         {
@@ -513,14 +524,13 @@ namespace lsp
             clap_features_stereo,
             E_DUMP_STATE | E_KVT_SYNC,
             mixer_x16_stereo_ports,
-            "util/mixer/stereo.xml",
+            "plugins/util/mixer/stereo.xml",
             NULL,
             mixer_x16_stereo_port_groups,
-            &mixer_bundle
+            &mixer_bundle,
+            3
         };
+        LSP_REGISTER_METADATA(mixer_x16_stereo);
 
     } /* namespace meta */
 } /* namespace lsp */
-
-
-

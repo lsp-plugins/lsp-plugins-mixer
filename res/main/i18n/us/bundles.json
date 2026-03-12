@@ -1,7 +1,15 @@
 {
 	"mixer": {
-		"name": "Mixer",
-		"description": "Performs mixing of multiple audio channels into one single channel"
+		"description": "Performs mixing of multiple audio channels into one single channel.",
+		"name": "Mixer"
+	},
+	"launcher": {
+		"mixer_x16_mono": "x16 Mono",
+		"mixer_x16_stereo": "x16 Stereo",
+		"mixer_x4_mono": "x4 Mono",
+		"mixer_x4_stereo": "x4 Stereo",
+		"mixer_x8_mono": "x8 Mono",
+		"mixer_x8_stereo": "x8 Stereo"
 	}
 }
 
